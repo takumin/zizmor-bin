@@ -61,10 +61,10 @@ jobs:
       with:
         key: build-${{ matrix.version }}-${{ matrix.target }}
         path: target/
-    - name: Install musl-tools
-      run: |-
-        sudo apt update
-        sudo apt install --no-install-recommends musl-tools
+    # - name: Install musl-tools
+    #   run: |-
+    #     sudo apt update
+    #     sudo apt install --no-install-recommends musl-tools
     - name: Download ${{ matrix.version }}
       run: |-
         task download
