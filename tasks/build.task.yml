@@ -16,4 +16,17 @@ tasks:
     desc: '{{.TASK}}'
     silent: true
     cmds:
-    - echo test
+    - task: versions
+
+  versions:
+    deps:
+    - task: tool:aqua:tag:coreutils
+    - task: tool:aqua:tag:gh
+    - task: tool:aqua:tag:jq
+    status:
+    - |-
+      AGE="$(coreutils expr "$(coreutils date +%s)" - "$(coreutils stat -c %Y versions.json)")"
+      coreutils test 86400 -gt "$AGE"
+    cmds:
+    - >-
+      gh api repos/woodruffw/zizmor/releases --jq '[.[].name] | {versions: .}' | jq -M > versions.json
