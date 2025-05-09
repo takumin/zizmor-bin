@@ -56,4 +56,5 @@ tasks:
     cmds:
     - cmd: cp -r ../.aqua .
       silent: true
+    - zig version
     - cargo zigbuild --verbose --release --target={{.BUILD_TARGET}}
