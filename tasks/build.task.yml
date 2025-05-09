@@ -28,7 +28,9 @@ tasks:
     - task: tool:aqua:tag:jq
     status:
     - |-
-      AGE="$(coreutils expr "$(coreutils date +%s)" - "$(coreutils stat -c %Y versions.json)")"
+      MTIME="$(coreutils stat -c %Y versions.json)"
+      NOW="$(coreutils date +%s)"
+      AGE="$(coreutils expr "$NOW" - "$MTIME")"
       coreutils test 86400 -gt "$AGE"
     cmds:
     - >-
