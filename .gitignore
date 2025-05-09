@@ -19,3 +19,7 @@ target/
 # go-task
 .task/*
 !.task/.gitkeep
+
+# build
+.archive/
+.build/

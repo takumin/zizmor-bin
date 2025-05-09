@@ -19,26 +19,22 @@ tasks:
     desc: '{{.TASK}}'
     silent: true
     cmds:
-    - task: extract
-    - task: build
+    - task: versions
 
-  extract:
+  versions:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}'
     deps:
     - task: tool:aqua:tag:coreutils
-    sources:
-    - .archive/zizmor.tar.gz
-    generates:
-    - .build/Cargo.toml
+    - task: tool:aqua:tag:gh
+    - task: tool:aqua:tag:jq
+    status:
+    - |-
+      MTIME="$(coreutils stat -c %Y versions.json)"
+      NOW="$(coreutils date +%s)"
+      AGE="$(coreutils expr "$NOW" - "$MTIME")"
+      coreutils test 86400 -gt "$AGE"
     cmds:
-    - cmd: coreutils mkdir -p .build
-      silent: true
-    # TODO: which tar command
-    - tar -xf .archive/zizmor.tar.gz -C .build --strip-components 1
-
-  build:
-    desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}'
-    cmds:
-    - echo TODO
+    - >-
+      gh api repos/woodruffw/zizmor/releases --jq '[.[].name] | {versions: .}' | jq -M > versions.json
+    - task: format:biome

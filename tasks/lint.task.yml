@@ -34,7 +34,7 @@ tasks:
     generates:
     - .task/.done_{{.TASK}}
     cmds:
-    - ec .
+    - ec -exclude .task -exclude .archive -exclude .build .
     - cmd: touch .task/.done_{{.TASK}}
       silent: true
 

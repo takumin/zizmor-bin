@@ -19,26 +19,24 @@ tasks:
     desc: '{{.TASK}}'
     silent: true
     cmds:
-    - task: extract
-    - task: build
+    - task: download
 
-  extract:
+  download:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}'
     deps:
-    - task: tool:aqua:tag:coreutils
+    - task: tool:aqua:tag:jq
+    vars:
+      VERSION:
+        sh: jq -r '.versions | sort_by(sub("^v";"") | split(".") | map(tonumber)) | last' versions.json
     sources:
-    - .archive/zizmor.tar.gz
+    - versions.json
     generates:
-    - .build/Cargo.toml
+    - .archive/zizmor.tar.gz
     cmds:
-    - cmd: coreutils mkdir -p .build
+    - cmd: coreutils mkdir -p .archive
       silent: true
-    # TODO: which tar command
-    - tar -xf .archive/zizmor.tar.gz -C .build --strip-components 1
-
-  build:
-    desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}'
-    cmds:
-    - echo TODO
+    # TODO: which curl command
+    - >-
+      curl -fsSLo .archive/zizmor.tar.gz
+      "https://github.com/woodruffw/zizmor/archive/refs/tags/{{.VERSION}}.tar.gz"
