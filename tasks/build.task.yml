@@ -21,6 +21,7 @@ tasks:
     cmds:
     - task: versions
     - task: download
+    - task: extract
 
   versions:
     desc: '{{.TASK}}'
@@ -51,8 +52,20 @@ tasks:
     sources:
     - versions.json
     generates:
-    - zizmor-{{.VERSION}}.tar.gz
+    - .task/zizmor.tar.gz
     cmds:
     - >-
-      curl -fsSLo "zizmor-{{.VERSION}}.tar.gz"
+      curl -fsSLo .task/zizmor.tar.gz
       "https://github.com/woodruffw/zizmor/archive/refs/tags/{{.VERSION}}.tar.gz"
+
+  extract:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    sources:
+    - .task/zizmor.tar.gz
+    generates:
+    - .task/zizmor/Cargo.toml
+    cmds:
+    - cmd: coreutils mkdir -p .task/zizmor
+      silent: true
+    - tar -xf .task/zizmor.tar.gz -C .task/zizmor --strip-components 1

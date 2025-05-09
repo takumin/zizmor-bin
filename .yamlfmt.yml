@@ -1,4 +1,6 @@
 gitignore_excludes: true
+exclude:
+- zizmor/
 formatter:
   type: basic
   line_ending: lf

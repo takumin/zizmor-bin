@@ -19,6 +19,3 @@ target/
 # go-task
 .task/*
 !.task/.gitkeep
-
-# sources
-zizmor-*.tar.gz
