@@ -36,9 +36,15 @@ jobs:
       with:
         key: aqua-${{ hashFiles('.aqua/**/*.yaml', '.aqua/**/*.yml') }}
         path: ~/.local/share/aquaproj-aqua/
+    - name: Download ${{ matrix.version }}
+      run: |-
+        task download
+    - name: Extract ${{ matrix.version }}
+      run: |-
+        task extract
     - name: Fetch cargo deps
       run: |-
-        task tool:cargo:fetch
+        task build:fetch
     - name: Fetch aqua tools
       run: |-
         task tool:aqua:tag:rustup

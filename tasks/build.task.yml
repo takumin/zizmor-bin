@@ -41,6 +41,20 @@ tasks:
       echo '{{ .MATRIX_TARGETS | toJson }}'
       | jq -cM '{include: map({version: "{{env "VERSION" | default .VERSION}}", target: .})}'
 
+  fetch:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}/.build'
+    deps:
+    - task: tool:aqua:tag:rustup
+    sources:
+    - '{{.ROOT_DIR}}/.build/Cargo.toml'
+    generates:
+    - '{{.ROOT_DIR}}/.task/.done_cargo:fetch'
+    cmds:
+    - cargo fetch --locked
+    - cmd: touch {{.ROOT_DIR}}/.task/.done_cargo:fetch
+      silent: true
+
   release:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}/.build'
@@ -49,6 +63,7 @@ tasks:
     - task: tool:aqua:tag:cargo-zigbuild
     - task: tool:aqua:tag:zig
     - task: tool:rustup:target:{{.BUILD_TARGET}}
+    - task: fetch
     sources:
     - '{{.ROOT_DIR}}/.build/Cargo.toml'
     generates:
