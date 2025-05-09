@@ -10,6 +10,9 @@ includes:
   tool:
     taskfile: tool.task.yml
     internal: true
+  format:
+    taskfile: format.task.yml
+    internal: true
 
 tasks:
   default:
@@ -30,3 +33,4 @@ tasks:
     cmds:
     - >-
       gh api repos/woodruffw/zizmor/releases --jq '[.[].name] | {versions: .}' | jq -M > versions.json
+    - task: format:biome

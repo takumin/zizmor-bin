@@ -17,6 +17,7 @@ tasks:
     silent: true
     cmds:
     - task: shfmt
+    - task: biome
     - task: yamlfmt
     - task: taplo
     - task: pinact
@@ -33,6 +34,20 @@ tasks:
     - .task/.done_{{.TASK}}
     cmds:
     - shfmt -w .
+    - cmd: touch .task/.done_{{.TASK}}
+      silent: true
+
+  biome:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:biome
+    sources:
+    - '**/*.json'
+    generates:
+    - .task/.done_{{.TASK}}
+    cmds:
+    - biome format --write >/dev/null
     - cmd: touch .task/.done_{{.TASK}}
       silent: true
 

@@ -1,0 +1,4 @@
+packages:
+- name: biomejs/biome@cli/v1.9.4
+  tags:
+  - biome
