@@ -31,7 +31,6 @@ tasks:
   matrix:
     desc: '{{.TASK}}'
     silent: true
-    dir: '{{.ROOT_DIR}}/.build'
     deps:
     - task: tool:aqua:tag:jq
     vars:
