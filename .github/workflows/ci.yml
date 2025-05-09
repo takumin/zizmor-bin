@@ -25,6 +25,14 @@ jobs:
       contents: read
     uses: ./.github/workflows/wc-lint.yml
   ##############################################################################
+  # Cache
+  ##############################################################################
+  cache:
+    name: Cache
+    permissions:
+      contents: read
+    uses: ./.github/workflows/wc-cache.yml
+  ##############################################################################
   # Build
   ##############################################################################
   build:
@@ -41,6 +49,7 @@ jobs:
     needs:
     - format
     - lint
+    - cache
     - build
     name: CI
     runs-on: ubuntu-latest
