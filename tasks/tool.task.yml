@@ -1,0 +1,62 @@
+# https://taskfile.dev
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+set: [pipefail]
+shopt: [globstar]
+
+tasks:
+  default:
+    desc: '{{.TASK}}'
+    silent: true
+    cmds:
+    - task: aqua:all
+
+  aqua:
+    internal: true
+    label: aqua:install:{{.TAG}}
+    dir: '{{.ROOT_DIR}}'
+    sources:
+    - .aqua/aqua.yml
+    - .aqua/pkgs/{{.TAG}}.yaml
+    generates:
+    - .task/.done_aqua:install:{{.TAG}}
+    cmds:
+    - aqua install {{.ARGS}}
+    - cmd: touch .task/.done_aqua:install:{{.TAG}}
+      silent: true
+
+  aqua:all:
+    desc: '{{.TASK}}'
+    cmds:
+    - task: aqua
+      vars:
+        TAG: all
+        ARGS: -a
+
+  aqua:tag:*:
+    desc: '{{.TASK}}'
+    cmds:
+    - task: aqua
+      vars:
+        TAG: '{{index .MATCH 0}}'
+        ARGS: -t {{index .MATCH 0}}
+
+  rustup:component:*:
+    desc: '{{.TASK}}'
+    label: rustup:component:{{index .MATCH 0}}
+    dir: '{{.ROOT_DIR}}'
+    status:
+    - rustup component list --installed | rg -q '^{{index .MATCH 0}}'
+    cmds:
+    - rustup component add '{{index .MATCH 0}}'
+
+  rustup:target:*:
+    desc: '{{.TASK}}'
+    label: rustup:target:{{index .MATCH 0}}
+    dir: '{{.ROOT_DIR}}'
+    status:
+    - rustup target list --installed | rg -q '^{{index .MATCH 0}}$'
+    cmds:
+    - rustup target add '{{index .MATCH 0}}'

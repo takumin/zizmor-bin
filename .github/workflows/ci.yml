@@ -1,0 +1,40 @@
+name: CI
+on:
+  push:
+    branches:
+    - main
+    tags:
+    - 'v*'
+  pull_request:
+permissions: {}
+jobs:
+  ##############################################################################
+  # Format
+  ##############################################################################
+  format:
+    name: Format
+    permissions:
+      contents: read
+    uses: ./.github/workflows/wc-format.yml
+  ##############################################################################
+  # Lint
+  ##############################################################################
+  lint:
+    name: Lint
+    permissions:
+      contents: read
+    uses: ./.github/workflows/wc-lint.yml
+  ##############################################################################
+  # Status Check
+  ##############################################################################
+  ci:
+    needs:
+    - format
+    - lint
+    name: CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    if: ${{ failure() || cancelled() }}
+    steps:
+    - name: Failure Status
+      run: exit 1

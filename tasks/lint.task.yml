@@ -1,0 +1,99 @@
+# https://taskfile.dev
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+set: [pipefail]
+shopt: [globstar]
+
+includes:
+  tool:
+    taskfile: tool.task.yml
+    internal: true
+
+tasks:
+  default:
+    desc: '{{.TASK}}'
+    silent: true
+    cmds:
+    - task: editorconfig-checker
+    - task: shellcheck
+    - task: actionlint
+    - task: ghalint-run
+    - task: ghalint-act
+
+  editorconfig-checker:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:ec
+    sources:
+    - '.aqua/**/*'
+    - '.github/**/*'
+    - '**/*'
+    generates:
+    - .task/.done_{{.TASK}}
+    cmds:
+    - ec .
+    - cmd: touch .task/.done_{{.TASK}}
+      silent: true
+
+  shellcheck:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:shellcheck
+    sources:
+    - '**/*.sh'
+    - '**/*.bash'
+    generates:
+    - .task/.done_{{.TASK}}
+    cmds:
+    - fd -H -E .git/ -E .task/ -t f -e sh -e bash -X shellcheck {}
+    - cmd: touch .task/.done_{{.TASK}}
+      silent: true
+
+  actionlint:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:actionlint
+    sources:
+    - '.github/**/*.yml'
+    - '.github/**/*.yaml'
+    generates:
+    - .task/.done_{{.TASK}}
+    cmds:
+    - actionlint -shellcheck shellcheck
+    - cmd: touch .task/.done_{{.TASK}}
+      silent: true
+
+  ghalint-run:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:ghalint
+    sources:
+    - '.github/**/*.yml'
+    - '.github/**/*.yaml'
+    generates:
+    - .task/.done_{{.TASK}}
+    cmds:
+    - ghalint run
+    - cmd: touch .task/.done_{{.TASK}}
+      silent: true
+
+  ghalint-act:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:ghalint
+    sources:
+    - '.github/**/*.yml'
+    - '.github/**/*.yaml'
+    generates:
+    - .task/.done_{{.TASK}}
+    cmds:
+    - ghalint act
+    - cmd: touch .task/.done_{{.TASK}}
+      silent: true
