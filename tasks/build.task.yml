@@ -53,8 +53,9 @@ tasks:
     - '{{.ROOT_DIR}}/.build/Cargo.toml'
     generates:
     - '{{.ROOT_DIR}}/.build/target/{{.BUILD_TARGET}}/release/zizmor'
+    vars:
+      ZIG_PATH:
+        sh: dirname "$(aqua which zig)"
     cmds:
-    - cmd: cp -r ../.aqua .
-      silent: true
     - zig version
-    - cargo zigbuild --verbose --release --target={{.BUILD_TARGET}}
+    - PATH="{{.ZIG_PATH}}:$PATH" cargo zigbuild --release --target={{.BUILD_TARGET}}
