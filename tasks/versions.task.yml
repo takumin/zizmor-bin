@@ -38,3 +38,12 @@ tasks:
     - >-
       gh api repos/woodruffw/zizmor/releases --jq '[.[].name] | {versions: .}' | jq -M > versions.json
     - task: format:biome
+
+  matrix:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:jq
+    cmds:
+    - >-
+      jq '{include: [.versions[] | {version: .}]}' versions.json
