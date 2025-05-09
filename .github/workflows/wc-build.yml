@@ -60,11 +60,7 @@ jobs:
       uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
         key: build-${{ matrix.version }}-${{ matrix.target }}
-        path: target/
-    # - name: Install musl-tools
-    #   run: |-
-    #     sudo apt update
-    #     sudo apt install --no-install-recommends musl-tools
+        path: .build/target/
     - name: Download ${{ matrix.version }}
       run: |-
         task download
@@ -82,4 +78,4 @@ jobs:
       uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
         key: ${{ steps.build-cache-restore.outputs.cache-primary-key }}
-        path: target/
+        path: .build/target/
