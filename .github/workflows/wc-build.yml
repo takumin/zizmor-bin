@@ -83,6 +83,12 @@ jobs:
       env:
         CARGO_INCREMENTAL: ${{ startsWith(github.ref, 'refs/tag/') && '0' || '1' }}
         BUILD_TARGET: ${{ matrix.target }}
+    - name: Save cargo deps cache
+      if: github.ref == 'refs/heads/main' && steps.deps-cache-restore.outputs.cache-hit != 'true'
+      uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+      with:
+        key: ${{ steps.deps-cache-restore.outputs.cache-primary-key }}
+        path: ~/.cargo/registry/
     - name: Save build cache
       if: github.ref == 'refs/heads/main' && steps.build-cache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
