@@ -6,6 +6,16 @@ version: '3'
 set: [pipefail]
 shopt: [globstar]
 
+vars:
+  BUILD_TARGET: '{{env "BUILD_TARGET" | default "x86_64-unknown-linux-musl"}}'
+  MATRIX_TARGETS:
+  - aarch64-apple-darwin
+  - aarch64-pc-windows-msvc
+  - aarch64-unknown-linux-musl
+  - x86_64-apple-darwin
+  - x86_64-pc-windows-msvc
+  - x86_64-unknown-linux-musl
+
 includes:
   tool:
     taskfile: tool.task.yml
@@ -39,6 +49,15 @@ tasks:
 
   build:
     desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}'
+    dir: '{{.ROOT_DIR}}/.build'
+    deps:
+    - task: tool:aqua:tag:rustup
+    - task: tool:aqua:tag:cargo-zigbuild
+    - task: tool:aqua:tag:zig
+    - task: tool:rustup:target:{{.BUILD_TARGET}}
+    sources:
+    - '{{.ROOT_DIR}}/.build/Cargo.toml'
+    generates:
+    - '{{.ROOT_DIR}}/.build/target/{{.BUILD_TARGET}}/release/zizmor'
     cmds:
-    - echo TODO
+    - cargo zigbuild --release --target={{.BUILD_TARGET}}

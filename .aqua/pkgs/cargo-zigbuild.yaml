@@ -1,0 +1,4 @@
+packages:
+- name: rust-cross/cargo-zigbuild@v0.20.0
+  tags:
+  - cargo-zigbuild
