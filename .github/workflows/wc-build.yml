@@ -58,13 +58,13 @@ jobs:
     - name: Restore aqua tools cache
       uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        key: aqua-${{ hashFiles('.aqua/**/*.yaml', '.aqua/**/*.yml') }}
+        key: aqua-${{ hashFiles('.aqua/pkgs/cargo-zigbuild.yaml', '.aqua/pkgs/rustup.yaml', '.aqua/pkgs/zig.yaml') }}
         path: ~/.local/share/aquaproj-aqua/
     - name: Restore cargo deps cache
       id: deps-cache-restore
       uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        key: deps-${{ matrix.version }}-${{ matrix.target }}
+        key: deps-${{ matrix.version }}-${{ matrix.target }}-${{ hashFiles('.github/cache-version') }}
         path: ~/.cargo/registry/
     - name: Restore build cache
       id: build-cache-restore

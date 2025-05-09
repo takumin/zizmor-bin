@@ -28,3 +28,10 @@ tasks:
     - task: download
     - task: extract
     - task: build
+
+  github:actions:cache:version:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    cmds:
+    # workaround: what to do when your cache key becomes corrupted
+    - coreutils date +%s > ./.github/cache-version
