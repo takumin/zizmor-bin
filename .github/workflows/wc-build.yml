@@ -75,7 +75,7 @@ jobs:
       with:
         key: build-${{ matrix.version }}-${{ matrix.target }}-${{ hashFiles('.github/cache-version') }}
         path: .build/
-    - name: Build ${{ matrix.version }}/${{ matrix.target }}
+    - name: Build ${{ matrix.version }} / ${{ matrix.target }}
       run: |-
         task build
       env:
@@ -88,3 +88,18 @@ jobs:
       with:
         key: ${{ steps.build-cache-restore.outputs.cache-primary-key }}
         path: .build/
+    - name: Get artifact name
+      id: artifact_name
+      run: echo "result=$(task build:name)" >> "$GITHUB_OUTPUT"
+    - name: Get binary name
+      id: binary_name
+      run: echo "result=$(task build:binname)" >> "$GITHUB_OUTPUT"
+    - name: Get binary path
+      id: binary_path
+      run: echo "result=$(task build:binpath)" >> "$GITHUB_OUTPUT"
+    - name: Upload artifact
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: ${{ steps.artifact_name.outputs.result }}
+        path: |-
+          ${{ steps.binary_path.outputs.result }}

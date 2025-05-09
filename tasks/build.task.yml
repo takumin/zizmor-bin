@@ -118,3 +118,29 @@ tasks:
       AQUA_GLOBAL_CONFIG: '{{.ROOT_DIR}}/.aqua/aqua.yml'
     cmds:
     - cargo zigbuild --locked --release --target={{.BUILD_TARGET}}
+
+  name:
+    desc: '{{.TASK}}'
+    deps:
+    - task: release
+    cmds:
+    - echo 'zizmor-{{.BUILD_TARGET}}'
+
+  binname:
+    desc: '{{.TASK}}'
+    deps:
+    - task: release
+    vars:
+      EXE: '{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+    cmds:
+    - echo 'zizmor-{{.BUILD_TARGET}}{{.EXE}}'
+
+  binpath:
+    desc: '{{.TASK}}'
+    deps:
+    - task: release
+    vars:
+      EXE: '{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+      VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+    cmds:
+    - echo '.build/{{.VERSION}}/target/{{.BUILD_TARGET}}/release/zizmor{{.EXE}}'
