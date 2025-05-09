@@ -59,4 +59,4 @@ tasks:
       # workaround: github actions build error: deps ring: zig not found
       AQUA_GLOBAL_CONFIG: '{{.ROOT_DIR}}/.aqua/aqua.yml'
     cmds:
-    - cargo zigbuild --release --target={{.BUILD_TARGET}}
+    - cargo zigbuild --locked --release --target={{.BUILD_TARGET}}
