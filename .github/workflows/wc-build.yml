@@ -39,7 +39,7 @@ jobs:
         echo "${BUILD_MATRIX}" | jq
   build:
     needs: matrix
-    name: ${{ matrix.version }}/${{ matrix.target }}
+    name: ${{ matrix.version }} / ${{ matrix.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
