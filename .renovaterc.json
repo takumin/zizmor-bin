@@ -11,12 +11,8 @@
 	"customManagers": [
 		{
 			"customType": "regex",
-			"managerFilePatterns": [
-				"/^version.json$/"
-			],
-			"matchStrings": [
-				"\"version\": \"(?<currentValue>.*?)\"\n"
-			],
+			"managerFilePatterns": ["/^version.json$/"],
+			"matchStrings": ["\"version\": \"(?<currentValue>.*?)\"\n"],
 			"datasourceTemplate": "github-releases",
 			"depNameTemplate": "woodruffw/zizmor"
 		}
