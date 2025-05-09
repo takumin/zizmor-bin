@@ -48,5 +48,11 @@ tasks:
     vars:
       VERSION:
         sh: jq -r '.versions | sort_by(sub("^v";"") | split(".") | map(tonumber)) | last' versions.json
+    sources:
+    - versions.json
+    generates:
+    - zizmor-{{.VERSION}}.tar.gz
     cmds:
-    - curl -fsSLO "https://github.com/woodruffw/zizmor/archive/refs/tags/{{.VERSION}}.tar.gz"
+    - >-
+      curl -fsSLo "zizmor-{{.VERSION}}.tar.gz"
+      "https://github.com/woodruffw/zizmor/archive/refs/tags/{{.VERSION}}.tar.gz"
