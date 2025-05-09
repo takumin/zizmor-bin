@@ -8,9 +8,10 @@
 	],
 	"timezone": "Asia/Tokyo",
 	"automerge": true,
-	"regexManagers": [
+	"customManagers": [
 		{
-			"fileMatch": ["^version.json$"],
+			"customType": "regex",
+			"managerFilePatterns": ["/^version.json$/"],
 			"matchStrings": ["\"version\": \"(?<currentValue>.*?)\"\n"],
 			"datasourceTemplate": "github-releases",
 			"depNameTemplate": "woodruffw/zizmor"
