@@ -72,15 +72,9 @@ jobs:
       with:
         key: build-${{ matrix.version }}-${{ matrix.target }}-${{ hashFiles('.github/cache-version') }}
         path: .build/target/
-    - name: Download ${{ matrix.version }}
-      run: |-
-        task download
-    - name: Extract ${{ matrix.version }}
-      run: |-
-        task extract
     - name: Build ${{ matrix.version }}/${{ matrix.target }}
       run: |-
-        task build:release
+        task build
       env:
         CARGO_INCREMENTAL: ${{ startsWith(github.ref, 'refs/tag/') && '0' || '1' }}
         BUILD_TARGET: ${{ matrix.target }}

@@ -11,8 +11,6 @@ includes:
   format: ./tasks/format.task.yml
   lint: ./tasks/lint.task.yml
   versions: ./tasks/versions.task.yml
-  download: ./tasks/download.task.yml
-  extract: ./tasks/extract.task.yml
   build: ./tasks/build.task.yml
 
 tasks:
@@ -25,8 +23,6 @@ tasks:
     - task: format
     - task: lint
     - task: versions
-    - task: download
-    - task: extract
     - task: build
 
   github:actions:cache:version:
