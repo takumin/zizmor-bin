@@ -22,6 +22,8 @@ tasks:
     - task: versions
 
   versions:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
     deps:
     - task: tool:aqua:tag:coreutils
     - task: tool:aqua:tag:gh
