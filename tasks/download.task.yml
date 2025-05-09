@@ -10,9 +10,6 @@ includes:
   tool:
     taskfile: tool.task.yml
     internal: true
-  format:
-    taskfile: format.task.yml
-    internal: true
 
 tasks:
   default:

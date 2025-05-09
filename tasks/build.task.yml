@@ -20,32 +20,13 @@ includes:
   tool:
     taskfile: tool.task.yml
     internal: true
-  format:
-    taskfile: format.task.yml
-    internal: true
 
 tasks:
   default:
     desc: '{{.TASK}}'
     silent: true
     cmds:
-    - task: extract
     - task: build
-
-  extract:
-    desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}'
-    deps:
-    - task: tool:aqua:tag:coreutils
-    sources:
-    - .archive/zizmor.tar.gz
-    generates:
-    - .build/Cargo.toml
-    cmds:
-    - cmd: coreutils mkdir -p .build
-      silent: true
-    # TODO: which tar command
-    - tar -xf .archive/zizmor.tar.gz -C .build --strip-components 1
 
   build:
     desc: '{{.TASK}}'

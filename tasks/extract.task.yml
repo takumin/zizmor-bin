@@ -1,0 +1,34 @@
+# https://taskfile.dev
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+set: [pipefail]
+shopt: [globstar]
+
+includes:
+  tool:
+    taskfile: tool.task.yml
+    internal: true
+
+tasks:
+  default:
+    desc: '{{.TASK}}'
+    silent: true
+    cmds:
+    - task: extract
+
+  extract:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:coreutils
+    sources:
+    - .archive/zizmor.tar.gz
+    generates:
+    - .build/Cargo.toml
+    cmds:
+    - cmd: coreutils mkdir -p .build
+      silent: true
+    # TODO: which tar command
+    - tar -xf .archive/zizmor.tar.gz -C .build --strip-components 1
