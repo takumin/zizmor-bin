@@ -53,9 +53,13 @@ tasks:
     - '{{.ROOT_DIR}}/.build/Cargo.toml'
     generates:
     - '{{.ROOT_DIR}}/.build/target/{{.BUILD_TARGET}}/release/zizmor'
-    vars:
-      ZIG_PATH:
-        sh: dirname "$(aqua which zig)"
+    env:
+      # workaround: github actions ring deps build error: zig not found
+      AQUA_GLOBAL_CONFIG: '{{.ROOT_DIR}}/.aqua/aqua.yml'
+    # vars:
+    #   ZIG_PATH:
+    #     sh: dirname "$(aqua which zig)"
     cmds:
-    - zig version
-    - PATH="{{.ZIG_PATH}}:$PATH" cargo zigbuild --release --target={{.BUILD_TARGET}}
+    # - zig version
+    # - PATH="{{.ZIG_PATH}}:$PATH" cargo zigbuild --release --target={{.BUILD_TARGET}}
+    - cargo zigbuild --release --target={{.BUILD_TARGET}}
