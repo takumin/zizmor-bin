@@ -7,5 +7,13 @@
 		"github>aquaproj/aqua-renovate-config:file#2.7.5(.aqua/pkgs/.*\\.ya?ml)"
 	],
 	"timezone": "Asia/Tokyo",
-	"automerge": true
+	"automerge": true,
+	"regexManagers": [
+		{
+			"fileMatch": ["^version.json$"],
+			"matchStrings": ["\"version\": \"(?<currentValue>.*?)\"\n"],
+			"datasourceTemplate": "github-releases",
+			"depNameTemplate": "woodruffw/zizmor"
+		}
+	]
 }

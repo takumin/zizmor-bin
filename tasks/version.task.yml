@@ -3,6 +3,9 @@
 
 version: '3'
 
+vars:
+  REPOSITORY: woodruffw/zizmor
+
 set: [pipefail]
 shopt: [globstar]
 
@@ -19,9 +22,9 @@ tasks:
     desc: '{{.TASK}}'
     silent: true
     cmds:
-    - task: versions
+    - task: generate
 
-  versions:
+  generate:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}'
     deps:
@@ -30,11 +33,11 @@ tasks:
     - task: tool:aqua:tag:jq
     status:
     - |-
-      MTIME="$(coreutils stat -c %Y versions.json)"
+      MTIME="$(coreutils stat -c %Y version.json)"
       NOW="$(coreutils date +%s)"
       AGE="$(coreutils expr "$NOW" - "$MTIME")"
       coreutils test 86400 -gt "$AGE"
     cmds:
     - >-
-      gh api repos/woodruffw/zizmor/releases --jq '[.[].name] | {versions: .}' | jq -M > versions.json
+      gh api 'repos/{{.REPOSITORY}}/releases/latest' --jq '{version: .name}' | jq -M > version.json
     - task: format:biome

@@ -8,7 +8,7 @@ shopt: [globstar]
 
 vars:
   LATEST_VERSION:
-    sh: jq -r '.versions | sort_by(sub("^v";"") | split(".") | map(tonumber)) | last' versions.json
+    sh: coreutils test -f version.json && jq -r '.version' version.json || echo 'unknown'
   BUILD_TARGET: '{{env "BUILD_TARGET" | default "x86_64-unknown-linux-musl"}}'
   MATRIX_TARGETS:
   - aarch64-apple-darwin
@@ -48,25 +48,23 @@ tasks:
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
     cmds:
-    - echo {{.VERSION}}
+    - echo '{{.VERSION}}'
 
   download:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}'
     deps:
     - task: tool:aqua:tag:jq
-    sources:
-    - versions.json
-    generates:
-    - .archive/zizmor.tar.gz
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+    status:
+    - coreutils test -f '{{.ROOT_DIR}}/.build/zizmor-{{.VERSION}}.tar.gz'
     cmds:
-    - cmd: coreutils mkdir -p .archive
+    - cmd: coreutils mkdir -p '{{.ROOT_DIR}}/.build/{{.VERSION}}'
       silent: true
     # TODO: which curl command
     - >-
-      curl -fsSLo .archive/zizmor.tar.gz
+      curl -fsSLo '{{.ROOT_DIR}}/.build/zizmor-{{.VERSION}}.tar.gz'
       "https://github.com/woodruffw/zizmor/archive/refs/tags/{{.VERSION}}.tar.gz"
 
   extract:
@@ -75,50 +73,46 @@ tasks:
     deps:
     - task: tool:aqua:tag:coreutils
     - task: download
-    sources:
-    - .archive/zizmor.tar.gz
-    generates:
-    - .build/Cargo.toml
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+    status:
+    - coreutils test -f '{{.ROOT_DIR}}/.build/{{.VERSION}}/Cargo.toml'
     cmds:
-    - cmd: coreutils mkdir -p .build
-      silent: true
     # TODO: which tar command
-    - tar -xf .archive/zizmor.tar.gz -C .build --strip-components 1
+    - >-
+      tar -xf '{{.ROOT_DIR}}/.build/zizmor-{{.VERSION}}.tar.gz'
+      -C '{{.ROOT_DIR}}/.build/{{.VERSION}}'
+      --strip-components 1
 
   fetch:
     desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}/.build'
+    dir: '{{.ROOT_DIR}}/.build/{{.VERSION}}'
     deps:
     - task: tool:aqua:tag:rustup
     - task: extract
-    sources:
-    - '{{.ROOT_DIR}}/.build/Cargo.toml'
-    generates:
-    - '{{.ROOT_DIR}}/.task/.done_cargo:fetch'
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+    status:
+    - coreutils test -f '{{.ROOT_DIR}}/.build/.done_fetch_{{.VERSION}}'
     cmds:
     - cargo fetch --locked
-    - cmd: touch {{.ROOT_DIR}}/.task/.done_cargo:fetch
+    - cmd: touch '{{.ROOT_DIR}}/.build/.done_fetch_{{.VERSION}}'
       silent: true
 
   release:
     desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}/.build'
+    dir: '{{.ROOT_DIR}}/.build/{{.VERSION}}'
     deps:
     - task: tool:aqua:tag:rustup
     - task: tool:aqua:tag:cargo-zigbuild
     - task: tool:aqua:tag:zig
     - task: tool:rustup:target:{{.BUILD_TARGET}}
     - task: fetch
-    sources:
-    - '{{.ROOT_DIR}}/.build/Cargo.toml'
-    generates:
-    - '{{.ROOT_DIR}}/.build/target/{{.BUILD_TARGET}}/release/zizmor'
     vars:
+      EXE: '{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+    status:
+    - coreutils test -f '{{.ROOT_DIR}}/.build/{{.VERSION}}/target/{{.BUILD_TARGET}}/release/zizmor{{.EXE}}'
     env:
       # workaround: github actions build error: deps ring: zig not found
       AQUA_GLOBAL_CONFIG: '{{.ROOT_DIR}}/.aqua/aqua.yml'

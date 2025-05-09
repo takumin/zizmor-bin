@@ -10,7 +10,7 @@ includes:
   tool: ./tasks/tool.task.yml
   format: ./tasks/format.task.yml
   lint: ./tasks/lint.task.yml
-  versions: ./tasks/versions.task.yml
+  version: ./tasks/version.task.yml
   build: ./tasks/build.task.yml
 
 tasks:
@@ -22,7 +22,7 @@ tasks:
     - task: tool
     - task: format
     - task: lint
-    - task: versions
+    - task: version
     - task: build
 
   github:actions:cache:version:
