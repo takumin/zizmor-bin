@@ -20,6 +20,7 @@ tasks:
     silent: true
     cmds:
     - task: versions
+    - task: download
 
   versions:
     desc: '{{.TASK}}'
@@ -38,3 +39,14 @@ tasks:
     - >-
       gh api repos/woodruffw/zizmor/releases --jq '[.[].name] | {versions: .}' | jq -M > versions.json
     - task: format:biome
+
+  download:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:jq
+    vars:
+      VERSION:
+        sh: jq -r '.versions | sort_by(sub("^v";"") | split(".") | map(tonumber)) | last' versions.json
+    cmds:
+    - curl -fsSLO "https://github.com/woodruffw/zizmor/archive/refs/tags/{{.VERSION}}.tar.gz"
