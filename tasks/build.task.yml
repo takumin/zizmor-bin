@@ -26,9 +26,22 @@ tasks:
     desc: '{{.TASK}}'
     silent: true
     cmds:
-    - task: build
+    - task: release
 
-  build:
+  matrix:
+    desc: '{{.TASK}}'
+    silent: true
+    dir: '{{.ROOT_DIR}}/.build'
+    deps:
+    - task: tool:aqua:tag:rustup
+    vars:
+      VERSION:
+        sh: cargo metadata --format-version=1 --no-deps | jq -r '.packages[0].version'
+    cmds:
+    - >-
+      echo '{{ .MATRIX_TARGETS | toJson }}' | jq '{include: map({version: "{{.VERSION}}", target: .})}'
+
+  release:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}/.build'
     deps:
