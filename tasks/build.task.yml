@@ -22,6 +22,7 @@ tasks:
     - task: versions
     - task: download
     - task: extract
+    - task: build
 
   versions:
     desc: '{{.TASK}}'
@@ -54,6 +55,7 @@ tasks:
     generates:
     - .task/zizmor.tar.gz
     cmds:
+    # TODO: which curl command
     - >-
       curl -fsSLo .task/zizmor.tar.gz
       "https://github.com/woodruffw/zizmor/archive/refs/tags/{{.VERSION}}.tar.gz"
@@ -61,6 +63,8 @@ tasks:
   extract:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:coreutils
     sources:
     - .task/zizmor.tar.gz
     generates:
@@ -68,4 +72,11 @@ tasks:
     cmds:
     - cmd: coreutils mkdir -p .task/zizmor
       silent: true
+    # TODO: which tar command
     - tar -xf .task/zizmor.tar.gz -C .task/zizmor --strip-components 1
+
+  build:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    cmds:
+    - echo TODO
