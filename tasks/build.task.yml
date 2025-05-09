@@ -33,14 +33,14 @@ tasks:
     silent: true
     dir: '{{.ROOT_DIR}}/.build'
     deps:
-    - task: tool:aqua:tag:rustup
     - task: tool:aqua:tag:jq
     vars:
       VERSION:
-        sh: cargo metadata --format-version=1 --no-deps | jq -r '.packages[0].version'
+        sh: jq -r '.versions | sort_by(sub("^v";"") | split(".") | map(tonumber)) | last' versions.json
     cmds:
     - >-
-      echo '{{ .MATRIX_TARGETS | toJson }}' | jq '{include: map({version: "{{.VERSION}}", target: .})}'
+      echo '{{ .MATRIX_TARGETS | toJson }}'
+      | jq '{include: map({version: "{{env "VERSION" | default.VERSION}}", target: .})}'
 
   release:
     desc: '{{.TASK}}'
