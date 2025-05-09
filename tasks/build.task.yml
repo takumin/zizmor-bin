@@ -39,7 +39,7 @@ tasks:
     cmds:
     - >-
       echo '{{ .MATRIX_TARGETS | toJson }}'
-      | jq '{include: map({version: "{{env "VERSION" | default.VERSION}}", target: .})}'
+      | jq '{include: map({version: "{{env "VERSION" | default .VERSION}}", target: .})}'
 
   release:
     desc: '{{.TASK}}'
