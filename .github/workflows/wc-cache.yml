@@ -3,7 +3,7 @@ on:
   workflow_call:
 permissions: {}
 concurrency:
-  group: fetch-${{ github.ref }}
+  group: cache-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
   cache:
