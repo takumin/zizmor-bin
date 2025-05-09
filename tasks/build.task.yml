@@ -43,7 +43,7 @@ tasks:
 
   release:
     desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}/.build'
+    dir: '{{.ROOT_DIR}}'
     deps:
     - task: tool:aqua:tag:rustup
     - task: tool:aqua:tag:cargo-zigbuild
@@ -54,4 +54,4 @@ tasks:
     generates:
     - '{{.ROOT_DIR}}/.build/target/{{.BUILD_TARGET}}/release/zizmor'
     cmds:
-    - cargo zigbuild --release --target={{.BUILD_TARGET}}
+    - cd .build && cargo zigbuild --release --target={{.BUILD_TARGET}}
