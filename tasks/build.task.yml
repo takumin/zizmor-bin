@@ -54,4 +54,6 @@ tasks:
     generates:
     - '{{.ROOT_DIR}}/.build/target/{{.BUILD_TARGET}}/release/zizmor'
     cmds:
-    - cargo zigbuild --release --target={{.BUILD_TARGET}}
+    - cmd: cp -r ../.aqua .
+      silent: true
+    - cargo zigbuild --verbose --release --target={{.BUILD_TARGET}}
