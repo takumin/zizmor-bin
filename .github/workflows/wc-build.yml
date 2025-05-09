@@ -64,13 +64,13 @@ jobs:
       id: deps-cache-restore
       uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        key: deps-${{ matrix.version }}-${{ matrix.target }}-${{ hashFiles('.github/cache-version') }}
+        key: deps-${{ matrix.version }}-${{ hashFiles('.github/cache-version') }}
         path: ~/.cargo/registry/
     - name: Restore build cache
       id: build-cache-restore
       uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        key: build-${{ matrix.version }}-${{ matrix.target }}
+        key: build-${{ matrix.version }}-${{ matrix.target }}-${{ hashFiles('.github/cache-version') }}
         path: .build/target/
     - name: Download ${{ matrix.version }}
       run: |-
@@ -84,12 +84,6 @@ jobs:
       env:
         CARGO_INCREMENTAL: ${{ startsWith(github.ref, 'refs/tag/') && '0' || '1' }}
         BUILD_TARGET: ${{ matrix.target }}
-    - name: Save cargo deps cache
-      if: github.ref == 'refs/heads/main' && steps.deps-cache-restore.outputs.cache-hit != 'true'
-      uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
-      with:
-        key: ${{ steps.deps-cache-restore.outputs.cache-primary-key }}
-        path: ~/.cargo/registry/
     - name: Save build cache
       if: github.ref == 'refs/heads/main' && steps.build-cache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
