@@ -63,11 +63,11 @@ jobs:
           cosign "${args[@]}"
         done
     - name: Prepare release notes
-      shell: bash -euo pipefail {0}
       env:
         CERTIFICATE_IDENTITY: >-
           ${{ github.server_url }}/${{ github.repository }}/.github/workflows/wc-sign.yml@${{ github.ref }}
         CERTIFICATE_OIDC_ISSUER: https://token.actions.githubusercontent.com
+      shell: bash -euo pipefail {0}
       run: |-
         echo 'Prepare release notes'
         BUILD_DATE="$(date +"%Y/%m/%d %I:%M:%S")"
@@ -86,12 +86,12 @@ jobs:
 
         GitHub Artifact Attestations:
         ```console
-        $ gh attestation verify "[binary path]"
+        $ gh attestation verify "[artifact path]"
         ````
 
         Cosign Verifying Signatures:
         ```console
-        $ cosign verify-blob "[binary path]" \
+        $ cosign verify-blob "[artifact path]" \
             --certificate "[certificate path]" \
             --signature "[signature path]" \
             --certificate-identity \
