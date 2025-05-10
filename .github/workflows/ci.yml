@@ -62,6 +62,8 @@ jobs:
     name: Release
     permissions:
       contents: write
+      id-token: read
+      attestations: read
     uses: ./.github/workflows/wc-release.yml
   ##############################################################################
   # Status Check
