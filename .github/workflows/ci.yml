@@ -42,11 +42,14 @@ jobs:
     permissions:
       contents: read
     uses: ./.github/workflows/wc-build.yml
+    with:
+      build-version: ${{ needs.cache.outputs.build-version }}
   ##############################################################################
   # Sign
   ##############################################################################
   sign:
     needs:
+    - cache
     - build
     name: Sign
     permissions:
@@ -58,11 +61,15 @@ jobs:
   ##############################################################################
   release:
     needs:
+    - cache
+    - build
     - sign
     name: Release
     permissions:
       contents: write
     uses: ./.github/workflows/wc-release.yml
+    with:
+      build-version: ${{ needs.cache.outputs.build-version }}
   ##############################################################################
   # Status Check
   ##############################################################################
