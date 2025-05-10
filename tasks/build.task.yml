@@ -91,7 +91,7 @@ tasks:
     # TODO: which curl command
     - >-
       curl -fsSLo '{{.ROOT_DIR}}/.build/zizmor-{{.VERSION}}.tar.gz'
-      "https://github.com/woodruffw/zizmor/archive/refs/tags/{{.VERSION}}.tar.gz"
+      "https://github.com/zizmorcore/zizmor/archive/refs/tags/{{.VERSION}}.tar.gz"
 
   extract:
     desc: '{{.TASK}}'
