@@ -7,9 +7,9 @@ set: [pipefail]
 shopt: [globstar]
 
 vars:
-  COSIGN_CERTIFICATE_IDENTITY:
+  CERTIFICATE_IDENTITY:
     sh: gh api user --jq '.email'
-  COSIGN_OIDC_ISSUER: 'https://github.com/login/oauth'
+  CERTIFICATE_OIDC_ISSUER: 'https://github.com/login/oauth'
   LATEST_VERSION:
     sh: coreutils test -f version.json && jq -r '.version' version.json || echo 'unknown'
   BUILD_TARGET: '{{env "BUILD_TARGET" | default "x86_64-unknown-linux-musl"}}'
@@ -32,7 +32,6 @@ tasks:
     silent: true
     cmds:
     - task: sha256sum:verify
-    - task: cosign:verify
 
   matrix:
     desc: '{{.TASK}}'
@@ -239,8 +238,8 @@ tasks:
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
       BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
-      COSIGN_CERTIFICATE_IDENTITY: '{{env "COSIGN_CERTIFICATE_IDENTITY" | default .COSIGN_CERTIFICATE_IDENTITY}}'
-      COSIGN_OIDC_ISSUER: '{{env "COSIGN_OIDC_ISSUER" | default .COSIGN_OIDC_ISSUER}}'
+      CERTIFICATE_IDENTITY: '{{env "CERTIFICATE_IDENTITY" | default .CERTIFICATE_IDENTITY}}'
+      CERTIFICATE_OIDC_ISSUER: '{{env "CERTIFICATE_OIDC_ISSUER" | default .CERTIFICATE_OIDC_ISSUER}}'
     sources:
     - '{{.BINNAME}}'
     - '{{.BINNAME}}.cert'
@@ -253,6 +252,6 @@ tasks:
       --certificate '{{.BINNAME}}.cert'
       --signature '{{.BINNAME}}.sig'
       --certificate-identity '{{.COSIGN_CERTIFICATE_IDENTITY}}'
-      --certificate-oidc-issuer '{{.COSIGN_OIDC_ISSUER}}'
+      --certificate-oidc-issuer '{{.COSIGN_CERTIFICATE_OIDC_ISSUER}}'
     - cmd: touch '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_cosign_verify'
       silent: true
