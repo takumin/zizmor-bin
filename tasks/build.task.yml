@@ -32,6 +32,7 @@ tasks:
     silent: true
     cmds:
     - task: sha256sum:verify
+    - task: cosign:verify
 
   matrix:
     desc: '{{.TASK}}'
