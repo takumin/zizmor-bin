@@ -86,8 +86,9 @@ jobs:
     - name: Cosign ${{ matrix.version }} / ${{ matrix.target }}
       if: github.ref == 'refs/heads/main'
       env:
-        CERTIFICATE_IDENTITY: ${{ github.server_url }}/${{ github.workflow_ref }}
-        CERTIFICATE_OIDC_ISSUER: https://token.actions.githubusercontent.com
+        CERTIFICATE_IDENTITY: >-
+          '${{ github.server_url }}/${{ github.action_repository }}/${{ github.action_path }}@${{ github.action_ref }}'
+        CERTIFICATE_OIDC_ISSUER: 'https://token.actions.githubusercontent.com'
       run: |-
         task build:cosign:verify
     - name: Save build cache

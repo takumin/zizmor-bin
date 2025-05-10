@@ -237,8 +237,8 @@ tasks:
       BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
     requires:
       vars:
-      - COSIGN_CERTIFICATE_IDENTITY
-      - COSIGN_CERTIFICATE_OIDC_ISSUER
+      - CERTIFICATE_IDENTITY
+      - CERTIFICATE_OIDC_ISSUER
     sources:
     - '{{.BINNAME}}'
     - '{{.BINNAME}}.cert'
@@ -250,7 +250,7 @@ tasks:
       cosign verify-blob '{{.BINNAME}}'
       --certificate '{{.BINNAME}}.cert'
       --signature '{{.BINNAME}}.sig'
-      --certificate-identity '{{.COSIGN_CERTIFICATE_IDENTITY}}'
-      --certificate-oidc-issuer '{{.COSIGN_CERTIFICATE_OIDC_ISSUER}}'
+      --certificate-identity '{{.CERTIFICATE_IDENTITY}}'
+      --certificate-oidc-issuer '{{.CERTIFICATE_OIDC_ISSUER}}'
     - cmd: touch '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_cosign_verify'
       silent: true
