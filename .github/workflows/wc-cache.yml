@@ -35,6 +35,7 @@ jobs:
     - name: Check valid version
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash -euo pipefail {0}
       run: |-
         task version:check
     - name: Get build version
@@ -53,6 +54,7 @@ jobs:
         key: deps-${{ steps.version.outputs.result }}-${{ hashFiles('.github/cache-version') }}
         path: ~/.cargo/registry/
     - name: Fetch aqua tools
+      shell: bash -euo pipefail {0}
       run: |-
         task tool:aqua:tag:rustup
         task tool:aqua:tag:cargo-zigbuild

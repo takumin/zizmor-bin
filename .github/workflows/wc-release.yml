@@ -19,14 +19,17 @@ jobs:
         path: dist/
         name: release-signed-artifacts
     - name: Check artifacts
+      shell: bash -euo pipefail {0}
       run: tree --charset ASCII dist/
     - name: Verify sha256sums
+      shell: bash -euo pipefail {0}
       run: |-
         echo 'Verify sha256sums'
         cd dist
         sha256sum -c SHA256SUMS || exit 1
     - name: Verify artifact attestation
       if: ${{ !startsWith(github.event_name, 'pull') }}
+      shell: bash -euo pipefail {0}
       run: |-
         echo 'Verify artifact attestation'
         cd dist

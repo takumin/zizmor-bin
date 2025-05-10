@@ -22,9 +22,11 @@ jobs:
       with:
         aqua_version: v2.51.1
     - name: Format files
+      shell: bash -euo pipefail {0}
       run: |-
         task format
     - name: Detected changes
+      shell: bash -euo pipefail {0}
       run: |-
         git reset
         git -c core.fileMode=false add --all
