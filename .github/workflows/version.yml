@@ -74,7 +74,7 @@ jobs:
     env:
       TAG_VERSION: ${{ needs.version.outputs.tagging }}
     permissions:
-      contents: write
+      contents: read
       id-token: write
     steps:
     - name: Checkout
@@ -92,32 +92,31 @@ jobs:
       run: |-
         aqua i -t gh
         aqua i -t gitsign
-    # - name: Create GitHub App Token
-    #   uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
-    #   id: app-token
-    #   with:
-    #     app-id: ${{ vars.APP_ID }}
-    #     private-key: ${{ secrets.PRIVATE_KEY }}
-    #     permission-contents: write
-    # - name: Get GitHub App User ID
-    #   id: get-user-id
-    #   env:
-    #     APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
-    #     GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-    #   shell: bash -euo pipefail {0}
-    #   run: |-
-    #     echo "user-id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+    - name: Create GitHub App Token
+      uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
+      id: app-token
+      with:
+        app-id: ${{ vars.APP_ID }}
+        private-key: ${{ secrets.PRIVATE_KEY }}
+        permission-contents: write
+    - name: Get GitHub App User ID
+      id: get-user-id
+      env:
+        APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+        GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+      shell: bash -euo pipefail {0}
+      run: |-
+        echo "user-id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
     - name: Setup git
       env:
-        # GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-        # APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
-        # APP_USER_ID: ${{ steps.get-user-id.outputs.user-id }}
+        GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+        APP_USER_ID: ${{ steps.get-user-id.outputs.user-id }}
         TIMESTAMP_SERVER_URL: http://timestamp.digicert.com
       shell: bash -euo pipefail {0}
       run: |-
         git config --local user.name "${GITHUB_SERVER_URL}/${GITHUB_WORKFLOW_REF}"
-        # git config --local user.email "${APP_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
-        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.email "${APP_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
         git config --local push.followTags true
         git config --local commit.gpgsign true
         git config --local tag.gpgsign true
