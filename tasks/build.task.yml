@@ -8,7 +8,7 @@ shopt: [globstar]
 
 vars:
   CERTIFICATE_IDENTITY:
-    sh: gh api user --jq '.email'
+    sh: git config get user.email
   CERTIFICATE_OIDC_ISSUER: 'https://github.com/login/oauth'
   LATEST_VERSION:
     sh: coreutils test -f version.json && jq -r '.version' version.json || echo 'unknown'
