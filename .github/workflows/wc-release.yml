@@ -45,8 +45,8 @@ jobs:
       if: ${{ !startsWith(github.event_name, 'pull') }}
       env:
         CERTIFICATE_IDENTITY: >-
-          '${{ github.server_url }}/${{ github.repository }}/.github/workflows/wc-sign.yml@${{ github.ref }}'
-        CERTIFICATE_OIDC_ISSUER: 'https://token.actions.githubusercontent.com'
+          ${{ github.server_url }}/${{ github.repository }}/.github/workflows/wc-sign.yml@${{ github.ref }}
+        CERTIFICATE_OIDC_ISSUER: https://token.actions.githubusercontent.com
       shell: bash -euo pipefail {0}
       run: |-
         echo 'Verify code signing with cosign'
