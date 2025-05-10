@@ -112,7 +112,6 @@ jobs:
         # GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         # APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
         # APP_USER_ID: ${{ steps.get-user-id.outputs.user-id }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         TIMESTAMP_SERVER_URL: http://timestamp.digicert.com
       shell: bash -euo pipefail {0}
       run: |-
