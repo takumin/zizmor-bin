@@ -97,6 +97,9 @@ jobs:
       with:
         key: ${{ steps.build-cache-restore.outputs.cache-primary-key }}
         path: .build/
+    - name: Generate sha256sum
+      run: |-
+        task build:sha256sum:verify
     - name: Get artifact name
       id: artifact_name
       run: echo "result=$(task build:name)" >> "$GITHUB_OUTPUT"
@@ -106,9 +109,6 @@ jobs:
     - name: Get binary path
       id: binary_path
       run: echo "result=$(task build:binpath)" >> "$GITHUB_OUTPUT"
-    - name: Generate sha256sum
-      run: |-
-        task build:sha256sum:verify
     - name: Upload artifact
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
