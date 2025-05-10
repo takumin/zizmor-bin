@@ -6,6 +6,13 @@ on:
     tags:
     - 'v*'
   pull_request:
+  workflow_dispatch:
+    inputs:
+      build-version:
+        description: "build version"
+        default: ""
+        required: false
+        type: string
 permissions: {}
 jobs:
   ##############################################################################
@@ -32,6 +39,8 @@ jobs:
     permissions:
       contents: read
     uses: ./.github/workflows/wc-setup.yml
+    with:
+      build-version: ${{ github.event.inputs.build-version }}
   ##############################################################################
   # Build
   ##############################################################################
