@@ -19,8 +19,6 @@ tasks:
   statdir:
     silent: true
     internal: true
-    status:
-    - coreutils test -d '{{.STATDIR}}'
     cmds:
     - coreutils mkdir -p '{{.STATDIR}}'
 
