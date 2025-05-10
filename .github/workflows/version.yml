@@ -49,6 +49,7 @@ jobs:
       run: |-
         echo "BUILD_VERSION: ${BUILD_VERSION}"
     - name: Check repository tag
+      id: check_tag
       continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,7 +59,7 @@ jobs:
         gh api "repos/${GITHUB_REPOSITORY}/releases" --jq '.[].name' | rg "^${BUILD_VERSION}$"
     - name: Set tagging version
       id: tagging
-      if: ${{ failure() }}
+      if: ${{ steps.check_tag.outcome == 'failure' }}
       shell: bash -euo pipefail {0}
       run: |-
         echo "version=${BUILD_VERSION}" >> "$GITHUB_OUTPUT"
