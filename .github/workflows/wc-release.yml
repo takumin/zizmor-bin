@@ -62,3 +62,50 @@ jobs:
           args+=("--certificate-oidc-issuer" "$CERTIFICATE_OIDC_ISSUER")
           cosign "${args[@]}"
         done
+    - name: Prepare release notes
+      shell: bash -euo pipefail {0}
+      env:
+        CERTIFICATE_IDENTITY: >-
+          ${{ github.server_url }}/${{ github.repository }}/.github/workflows/wc-sign.yml@${{ github.ref }}
+        CERTIFICATE_OIDC_ISSUER: https://token.actions.githubusercontent.com
+      run: |-
+        echo 'Prepare release notes'
+        BUILD_DATE="$(date +"%Y/%m/%d %I:%M:%S")"
+        SHA256SUMS="$(cat dist/SHA256SUMS)"
+        cat <<-__EOF__ | tee /tmp/release-note.txt
+        The binaries were built automatically on GitHub Actions.
+        When the build system changes, the binaries may change too.
+        Please verify using SHA256SUMS or verify the signature using cosign.
+
+        Build date: `${BUILD_DATE}`
+
+        SHA256SUMS:
+        ```checksum
+        ${SHA256SUMS}
+        ```
+
+        GitHub Artifact Attestations:
+        ```console
+        $ gh attestation verify "[binary path]"
+        ````
+
+        Cosign Verifying Signatures:
+        ```console
+        $ cosign verify-blob "[binary path]" \
+            --certificate "[certificate path]" \
+            --signature "[signature path]" \
+            --certificate-identity \
+            '$CERTIFICATE_IDENTITY' \
+            --certificate-oidc-issuer \
+            '$CERTIFICATE_OIDC_ISSUER'
+        ````
+
+        See also: https://github.com/zizmorcore/zizmor/releases/tag/${GITHUB_REF_NAME}
+        __EOF__
+    - name: "Create release"
+      if: startsWith(github.ref, 'refs/tags/')
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash -euo pipefail {0}
+      run: |-
+        gh release create -F /tmp/release-note.txt --draft --title "${GITHUB_REF_NAME}" "${GITHUB_REF_NAME}" dist/*
