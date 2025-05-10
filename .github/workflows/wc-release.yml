@@ -27,15 +27,15 @@ jobs:
         sha256sum -c SHA256SUMS
     - name: Verify artifact attestation
       if: ${{ !startsWith(github.event_name, 'pull') }}
-      run: |
+      run: |-
         echo 'Verify artifact attestation'
         cd dist
         # for f in $(find . -type f -not -name '*.cert' -a -not -name '*.sig' -printf '%f\n' | sort); do
         #   gh attestation verify "$f" -R "${GITHUB_REPOSITORY}";
         # done
         # check failed
-        for f in $(find . -type f -not -name '*.cert' -a -not -name '*.sig' -printf '%f\n' | sort); do
-          gh attestation verify "$f" -R "${GITHUB_REPOSITORY}" --format json;
+        for f in $(find . -type f -printf '%f\n' | sort); do
+          gh attestation verify "$f" -R "${GITHUB_REPOSITORY}" || exit 1;
         done
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
