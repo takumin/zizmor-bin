@@ -28,7 +28,7 @@ tasks:
     desc: '{{.TASK}}'
     silent: true
     cmds:
-    - task: binary
+    - task: sha256sum:verify
 
   matrix:
     desc: '{{.TASK}}'
@@ -62,7 +62,8 @@ tasks:
     vars:
       EXE: '{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
     cmds:
-    - echo 'zizmor-{{.BUILD_TARGET}}{{.EXE}}'
+    - echo '{{.BINNAME}}'
+    # - echo 'zizmor-{{.BUILD_TARGET}}{{.EXE}}'
 
   binpath:
     desc: '{{.TASK}}'
@@ -141,3 +142,46 @@ tasks:
       AQUA_GLOBAL_CONFIG: '{{.ROOT_DIR}}/.aqua/aqua.yml'
     cmds:
     - cargo zigbuild --locked --release --target={{.BUILD_TARGET}}
+
+  prepare:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}/.build/{{.VERSION}}/target/{{.BUILD_TARGET}}/release'
+    deps:
+    - task: tool:aqua:tag:coreutils
+    - task: binary
+    vars:
+      VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+      BUILD_BINNAME: 'zizmor{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+      DIST_BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+    status:
+    - coreutils test -f '{{.ROOT_DIR}}/.distrib/{{.DIST_BINNAME}}'
+    cmds:
+    - cmd: coreutils mkdir -p '{{.ROOT_DIR}}/.distrib'
+      silent: true
+    - coreutils cp '{{.BUILD_BINNAME}}' '{{.ROOT_DIR}}/.distrib/{{.DIST_BINNAME}}'
+
+  sha256sum:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}/.distrib'
+    deps:
+    - task: tool:aqua:tag:coreutils
+    - task: prepare
+    vars:
+      VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+      BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+    status:
+    - coreutils test -f '{{.BINNAME}}.sha256sum'
+    cmds:
+    - coreutils sha256sum -b "{{.BINNAME}}" > "{{.BINNAME}}.sha256sum"
+
+  sha256sum:verify:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}/.distrib'
+    deps:
+    - task: tool:aqua:tag:coreutils
+    - task: sha256sum
+    vars:
+      VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+      BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+    cmds:
+    - coreutils sha256sum -c "{{.BINNAME}}.sha256sum"
