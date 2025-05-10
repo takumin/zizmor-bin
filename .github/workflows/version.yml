@@ -107,37 +107,30 @@ jobs:
       shell: bash -euo pipefail {0}
       run: |-
         echo "user-id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
-    - name: Set Git User Config
-      shell: bash -euo pipefail {0}
+    - name: Setup gitsign
       env:
+        GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
         APP_USER_ID: ${{ steps.get-user-id.outputs.user-id }}
-      run: |-
-        git config --global user.name "${APP_SLUG}[bot]"
-        git config --global user.email "${APP_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
-    - name: Setup gitsign
-      shell: bash -euo pipefail {0}
-      run: |-
-        git config --global gpg.x509.program gitsign
-        git config --global gpg.format x509
-        git config --global commit.gpgsign true
-        git config --global tag.gpgsign true
-    - name: Release commit
-      env:
-        GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-      shell: bash -euo pipefail {0}
-      run: |-
-        git commit --allow-empty --message="${TAG_VERSION}"
-    - name: Tagging version
-      env:
-        GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-      shell: bash -euo pipefail {0}
-      run: |-
-        git tag -m "${TAG_VERSION}" "${TAG_VERSION}"
-    - name: Push repository
-      env:
-        GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        TIMESTAMP_SERVER_URL: http://timestamp.digicert.com
       shell: bash -euo pipefail {0}
       run: |-
         git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
+        git config --global user.name "${GITHUB_SERVER_URL}/${GITHUB_WORKFLOW_REF}"
+        git config --global user.email "${APP_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+        git config --global commit.gpgsign true
+        git config --global tag.gpgsign true
+        git config --global gpg.format x509
+        git config --global gpg.x509.program gitsign
+        git config --global gitsign.matchCommitter true
+        git config --global gitsign.timestampURL "${TIMESTAMP_SERVER_URL}"
+    - name: Release commit
+      shell: bash -euo pipefail {0}
+      run: |-
+        git commit --allow-empty --message="${TAG_VERSION}"
+        git push
+    - name: Tagging version
+      shell: bash -euo pipefail {0}
+      run: |-
+        git tag -m "${TAG_VERSION}" "${TAG_VERSION}"
         git push --tags
