@@ -154,15 +154,15 @@ tasks:
       BUILD_BINNAME: 'zizmor{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
       DIST_BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
     status:
-    - coreutils test -f '{{.ROOT_DIR}}/.distrib/{{.DIST_BINNAME}}'
+    - coreutils test -f '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist/{{.DIST_BINNAME}}'
     cmds:
-    - cmd: coreutils mkdir -p '{{.ROOT_DIR}}/.distrib'
+    - cmd: coreutils mkdir -p '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist'
       silent: true
-    - coreutils cp '{{.BUILD_BINNAME}}' '{{.ROOT_DIR}}/.distrib/{{.DIST_BINNAME}}'
+    - coreutils cp '{{.BUILD_BINNAME}}' '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist/{{.DIST_BINNAME}}'
 
   sha256sum:
     desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}/.distrib'
+    dir: '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist'
     deps:
     - task: tool:aqua:tag:coreutils
     - task: prepare
@@ -176,7 +176,7 @@ tasks:
 
   sha256sum:verify:
     desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}/.distrib'
+    dir: '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist'
     deps:
     - task: tool:aqua:tag:coreutils
     - task: sha256sum
