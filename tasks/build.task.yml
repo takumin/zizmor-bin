@@ -60,19 +60,21 @@ tasks:
     desc: '{{.TASK}}'
     silent: true
     vars:
-      EXE: '{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+      NAME:
+        sh: task build:name
     cmds:
-    - echo '{{.BINNAME}}'
-    # - echo 'zizmor-{{.BUILD_TARGET}}{{.EXE}}'
+    - echo '{{.NAME}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
 
   binpath:
     desc: '{{.TASK}}'
     silent: true
     vars:
-      EXE: '{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
-      VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+      VERSION:
+        sh: task build:version
+      BINNAME:
+        sh: task build:binname
     cmds:
-    - echo '.build/{{.VERSION}}/target/{{.BUILD_TARGET}}/release/zizmor{{.EXE}}'
+    - echo '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist/{{.BINNAME}}'
 
   download:
     desc: '{{.TASK}}'
