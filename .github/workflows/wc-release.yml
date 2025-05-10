@@ -18,5 +18,10 @@ jobs:
       with:
         path: dist/
         name: release-artifacts
+    - name: Verify sha256sums
+      run: |-
+        echo 'Verify sha256sums'
+        cd dist
+        sha256sum -c SHA256SUMS
     - name: Check artifacts
       run: tree --charset ASCII dist/
