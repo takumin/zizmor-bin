@@ -114,5 +114,11 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       shell: bash -euo pipefail {0}
-      run: |-
-        gh release create -F /tmp/release-note.txt --draft --title "${BUILD_VERSION}" "${BUILD_VERSION}" dist/*
+      run: >-
+        gh release create
+        -F /tmp/release-note.txt
+        -R "${GITHUB_REPOSITORY}"
+        --draft
+        --title "${BUILD_VERSION}"
+        "${BUILD_VERSION}"
+        dist/*
