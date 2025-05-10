@@ -51,6 +51,7 @@ jobs:
     - name: Check repository tag
       continue-on-error: true
       env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BUILD_VERSION: ${{ steps.version.outputs.result }}
       shell: bash -euo pipefail {0}
       run: |-
