@@ -91,12 +91,12 @@ jobs:
 
         Cosign Verifying Signatures:
         \`\`\`console
-        $ cosign verify-blob "[artifact path]" \
-            --certificate "[certificate path]" \
-            --signature "[signature path]" \
-            --certificate-identity \
-            "$CERTIFICATE_IDENTITY" \
-            --certificate-oidc-issuer \
+        $ cosign verify-blob "[artifact path]" \\
+            --certificate "[certificate path]" \\
+            --signature "[signature path]" \\
+            --certificate-identity \\
+            "$CERTIFICATE_IDENTITY" \\
+            --certificate-oidc-issuer \\
             "$CERTIFICATE_OIDC_ISSUER"
         \`\`\`
 
