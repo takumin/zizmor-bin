@@ -48,6 +48,7 @@ tasks:
     deps:
     - task: tool:aqua:tag:coreutils
     - task: tool:aqua:tag:gh
+    - task: tool:aqua:tag:ripgrep
     status:
     - coreutils test -z "{{env "BUILD_VERSION"}}"
     cmds:
