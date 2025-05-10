@@ -89,6 +89,9 @@ jobs:
       with:
         key: ${{ steps.build-cache-restore.outputs.cache-primary-key }}
         path: .build/
+    - name: Code signing ${{ matrix.version }} / ${{ matrix.target }}
+      run: |-
+        task build:cosign
     - name: Get artifact name
       id: artifact_name
       run: echo "result=$(task build:name)" >> "$GITHUB_OUTPUT"
