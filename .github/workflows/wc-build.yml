@@ -78,7 +78,7 @@ jobs:
       with:
         key: build-${{ matrix.version }}-${{ matrix.target }}-${{ hashFiles('.github/cache-version') }}
         path: .build/
-    - name: Build binary ${{ matrix.version }} / ${{ matrix.target }}
+    - name: Build binary
       env:
         CARGO_INCREMENTAL: ${{ startsWith(github.ref, 'refs/tag/') && '0' || '1' }}
       run: |-
@@ -98,10 +98,10 @@ jobs:
     - name: Get binary path
       id: binary_path
       run: echo "result=$(task build:binpath)" >> "$GITHUB_OUTPUT"
-    - name: Generate sha256sum ${{ matrix.version }} / ${{ matrix.target }}
+    - name: Generate sha256sum
       run: |-
         task build:sha256sum:verify
-    - name: Generate cosign ${{ matrix.version }} / ${{ matrix.target }}
+    - name: Generate cosign
       if: ${{ !startsWith(github.event_name, 'pull') }}
       env:
         CERTIFICATE_IDENTITY: >-
