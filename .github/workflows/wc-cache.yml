@@ -1,6 +1,11 @@
 name: Cache
 on:
   workflow_call:
+    inputs:
+      build-version:
+        default: ""
+        required: false
+        type: string
 permissions: {}
 concurrency:
   group: cache-${{ github.ref }}
@@ -12,6 +17,8 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: read
+    env:
+      BUILD_VERSION: ${{ inputs.build-version }}
     steps:
     - name: Checkout
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -25,11 +32,13 @@ jobs:
       uses: aquaproj/aqua-installer@5e54e5cee8a95ee2ce7c04cb993da6dfad13e59c # v3.1.2
       with:
         aqua_version: v2.51.1
+    - name: Check valid version
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |-
+        task version:check
     - name: Get build version
       id: version
-      # TODO: set BUILD_VERSION
-      # env:
-      #   BUILD_VERSION: TODO
       run: echo "result=$(task build:version)" >> "$GITHUB_OUTPUT"
     - name: Restore setup build aqua cache
       id: aqua-cache-restore

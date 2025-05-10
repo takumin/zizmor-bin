@@ -17,6 +17,8 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: read
+    env:
+      BUILD_VERSION: ${{ inputs.build-version }}
     outputs:
       targets: ${{ steps.matrix.outputs.result }}
     steps:
@@ -31,15 +33,13 @@ jobs:
       uses: aquaproj/aqua-installer@5e54e5cee8a95ee2ce7c04cb993da6dfad13e59c # v3.1.2
       with:
         aqua_version: v2.51.1
-    - name: Check version
+    - name: Check valid version
       env:
-        BUILD_VERSION: ${{ inputs.build-version }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |-
         task version:check
     - name: Generate matrix
       id: matrix
-      env:
-        BUILD_VERSION: ${{ inputs.build-version }}
       run: |-
         echo "result=$(task build:matrix)" >> "$GITHUB_OUTPUT"
     - name: Check matrix
