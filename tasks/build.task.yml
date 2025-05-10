@@ -28,7 +28,7 @@ tasks:
     desc: '{{.TASK}}'
     silent: true
     cmds:
-    - task: release
+    - task: build
 
   matrix:
     desc: '{{.TASK}}'
@@ -122,7 +122,7 @@ tasks:
     - cmd: touch '{{.ROOT_DIR}}/.build/.done_fetch_{{.VERSION}}'
       silent: true
 
-  release:
+  build:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}/.build/{{.VERSION}}'
     deps:
