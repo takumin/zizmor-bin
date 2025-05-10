@@ -127,6 +127,6 @@ jobs:
         GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
       shell: bash -euo pipefail {0}
       run: |-
-        git tag -m "${TAG_VERSION}" "${TAG_VERSION}"
+        git tag -s -m "${TAG_VERSION}" "${TAG_VERSION}"
         git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
         git push --tags
