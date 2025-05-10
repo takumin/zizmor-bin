@@ -7,6 +7,9 @@ set: [pipefail]
 shopt: [globstar]
 
 vars:
+  COSIGN_CERTIFICATE_IDENTITY:
+    sh: gh api user --jq '.email'
+  COSIGN_OIDC_ISSUER: 'https://github.com/login/oauth'
   LATEST_VERSION:
     sh: coreutils test -f version.json && jq -r '.version' version.json || echo 'unknown'
   BUILD_TARGET: '{{env "BUILD_TARGET" | default "x86_64-unknown-linux-musl"}}'
@@ -210,13 +213,10 @@ tasks:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist'
     deps:
-    - task: binary
+    - task: prepare
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
       BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
-    status:
-    - coreutils test -f '{{.BINNAME}}.cert'
-    - coreutils test -f '{{.BINNAME}}.sig'
     sources:
     - '{{.BINNAME}}'
     generates:
@@ -225,6 +225,33 @@ tasks:
     cmds:
     - >-
       cosign sign-blob {{.BINNAME}}
+      -d
       -y
       --output-certificate {{.BINNAME}}.cert
       --output-signature {{.BINNAME}}.sig
+
+  cosign:verify:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist'
+    deps:
+    - task: cosign
+    vars:
+      VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+      BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+      COSIGN_CERTIFICATE_IDENTITY: '{{env "COSIGN_CERTIFICATE_IDENTITY" | default .COSIGN_CERTIFICATE_IDENTITY}}'
+      COSIGN_OIDC_ISSUER: '{{env "COSIGN_OIDC_ISSUER" | default .COSIGN_OIDC_ISSUER}}'
+    sources:
+    - '{{.BINNAME}}'
+    - '{{.BINNAME}}.cert'
+    - '{{.BINNAME}}.sig'
+    generates:
+    - '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_cosign_verify'
+    cmds:
+    - >-
+      cosign verify-blob '{{.BINNAME}}'
+      --certificate '{{.BINNAME}}.cert'
+      --signature '{{.BINNAME}}.sig'
+      --certificate-identity '{{.COSIGN_CERTIFICATE_IDENTITY}}'
+      --certificate-oidc-issuer '{{.COSIGN_OIDC_ISSUER}}'
+    - cmd: touch '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_cosign_verify'
+      silent: true
