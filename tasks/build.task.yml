@@ -222,7 +222,6 @@ tasks:
     cmds:
     - >-
       cosign sign-blob {{.BINNAME}}
-      -d
       -y
       --output-certificate {{.BINNAME}}.cert
       --output-signature {{.BINNAME}}.sig
