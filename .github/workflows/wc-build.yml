@@ -84,10 +84,10 @@ jobs:
       run: |-
         task build
     - name: Cosign ${{ matrix.version }} / ${{ matrix.target }}
-      if: github.ref == 'refs/heads/main'
+      if: ${{ !startsWith(github.event_name, 'pull') }}
       env:
         CERTIFICATE_IDENTITY: >-
-          '${{ github.server_url }}/${{ github.action_repository }}/${{ github.action_path }}@${{ github.action_ref }}'
+          '${{ github.server_url }}/${{ github.repository }}/.github/workflows/wc-build.yml@${{ github.ref }}'
         CERTIFICATE_OIDC_ISSUER: 'https://token.actions.githubusercontent.com'
       run: |-
         task build:cosign:verify
