@@ -1,6 +1,11 @@
 name: Lint
 on:
   workflow_call:
+    inputs:
+      build-version:
+        default: ""
+        required: false
+        type: string
 permissions: {}
 concurrency:
   group: build-${{ github.ref }}
@@ -26,13 +31,18 @@ jobs:
       uses: aquaproj/aqua-installer@5e54e5cee8a95ee2ce7c04cb993da6dfad13e59c # v3.1.2
       with:
         aqua_version: v2.51.1
-    - name: Generate Matrix
+    - name: Check version
+      env:
+        BUILD_VERSION: ${{ inputs.build-version }}
+      run: |-
+        task version:check
+    - name: Generate matrix
       id: matrix
-      # TODO: set BUILD_VERSION
-      # env:
-      #   BUILD_VERSION: TODO
-      run: echo "result=$(task build:matrix)" >> "$GITHUB_OUTPUT"
-    - name: Check Matrix
+      env:
+        BUILD_VERSION: ${{ inputs.build-version }}
+      run: |-
+        echo "result=$(task build:matrix)" >> "$GITHUB_OUTPUT"
+    - name: Check matrix
       env:
         BUILD_MATRIX: ${{ steps.matrix.outputs.result }}
       run: |-

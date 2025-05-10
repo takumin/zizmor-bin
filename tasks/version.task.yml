@@ -41,3 +41,14 @@ tasks:
     - >-
       gh api 'repos/{{.REPOSITORY}}/releases/latest' --jq '{version: .name}' | jq -M > version.json
     - task: format:biome
+
+  check:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:coreutils
+    - task: tool:aqua:tag:gh
+    status:
+    - coreutils test -z "{{env "BUILD_VERSION"}}"
+    cmds:
+    - gh api 'repos/{{.REPOSITORY}}/releases' --jq '.[].name' | rg '^{{env "BUILD_VERSION"}}$'
