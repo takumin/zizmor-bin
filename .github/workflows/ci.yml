@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       build-version:
-        description: "build version"
+        description: "Build version from"
         default: ""
         required: false
         type: string
