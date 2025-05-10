@@ -53,3 +53,12 @@ tasks:
     - coreutils test -z "{{env "BUILD_VERSION"}}"
     cmds:
     - gh api 'repos/{{.REPOSITORY}}/releases' --jq '.[].name' | rg '^{{env "BUILD_VERSION"}}$'
+
+  latest:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    silent: true
+    deps:
+    - task: tool:aqua:tag:jq
+    cmds:
+    - jq -r '.version' version.json
