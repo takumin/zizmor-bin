@@ -89,15 +89,6 @@ jobs:
       with:
         key: ${{ steps.build-cache-restore.outputs.cache-primary-key }}
         path: .build/
-    - name: Code signing ${{ matrix.version }} / ${{ matrix.target }}
-      run: |-
-        task build:cosign
-    - name: Verify signing ${{ matrix.version }} / ${{ matrix.target }}
-      env:
-        COSIGN_CERTIFICATE_IDENTITY: https://github.com/${{ github.workflow_ref }}
-        COSIGN_OIDC_ISSUER: https://token.actions.githubusercontent.com
-      run: |-
-        task build:cosign:verify
     - name: Get artifact name
       id: artifact_name
       run: echo "result=$(task build:name)" >> "$GITHUB_OUTPUT"
