@@ -3,6 +3,9 @@
 
 version: '3'
 
+vars:
+  STATDIR: '{{env "TASK_TEMP_DIR" | default .ROOT_DIR }}/.stat'
+
 set: [pipefail]
 shopt: [globstar]
 
@@ -22,19 +25,28 @@ tasks:
     - task: taplo
     - task: pinact
 
+  statdir:
+    silent: true
+    internal: true
+    status:
+    - coreutils test -d '{{.STATDIR}}'
+    cmds:
+    - coreutils mkdir -p '{{.STATDIR}}'
+
   shfmt:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}'
     deps:
     - task: tool:aqua:tag:shfmt
+    - statdir
     sources:
     - '**/*.sh'
     - '**/*.bash'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - shfmt -w .
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
 
   biome:
@@ -42,13 +54,14 @@ tasks:
     dir: '{{.ROOT_DIR}}'
     deps:
     - task: tool:aqua:tag:biome
+    - statdir
     sources:
     - '**/*.json'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - biome format --write >/dev/null
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
 
   yamlfmt:
@@ -56,16 +69,17 @@ tasks:
     dir: '{{.ROOT_DIR}}'
     deps:
     - task: tool:aqua:tag:yamlfmt
+    - statdir
     sources:
     - '.aqua/**/*.yml'
     - '.aqua/**/*.yaml'
     - '**/*.yml'
     - '**/*.yaml'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - yamlfmt .
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
 
   taplo:
@@ -73,13 +87,14 @@ tasks:
     dir: '{{.ROOT_DIR}}'
     deps:
     - task: tool:aqua:tag:taplo
+    - statdir
     sources:
     - '**/*.toml'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - taplo format 2>/dev/null
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
 
   pinact:
@@ -87,12 +102,13 @@ tasks:
     dir: '{{.ROOT_DIR}}'
     deps:
     - task: tool:aqua:tag:pinact
+    - statdir
     sources:
     - '.github/**/*.yml'
     - '.github/**/*.yaml'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - pinact run
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true

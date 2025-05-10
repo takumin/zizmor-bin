@@ -17,8 +17,8 @@ target/
 #.idea/
 
 # go-task
-.task/*
-!.task/.gitkeep
+.task/
+.stat/
 
 # build
 .build/

@@ -3,6 +3,9 @@
 
 version: '3'
 
+vars:
+  STATDIR: '{{env "TASK_TEMP_DIR" | default .ROOT_DIR }}/.stat'
+
 set: [pipefail]
 shopt: [globstar]
 
@@ -13,18 +16,28 @@ tasks:
     cmds:
     - task: aqua:all
 
+  statdir:
+    silent: true
+    internal: true
+    status:
+    - coreutils test -d '{{.STATDIR}}'
+    cmds:
+    - coreutils mkdir -p '{{.STATDIR}}'
+
   aqua:
     internal: true
     label: aqua:install:{{.TAG}}
     dir: '{{.ROOT_DIR}}'
+    deps:
+    - statdir
     sources:
     - .aqua/aqua.yml
     - .aqua/pkgs/{{.TAG}}.yaml
     generates:
-    - .task/.done_aqua:install:{{.TAG}}
+    - '{{.STATDIR}}/.done_aqua:install:{{.TAG}}'
     cmds:
     - aqua install {{.ARGS}}
-    - cmd: touch .task/.done_aqua:install:{{.TAG}}
+    - cmd: touch '{{.STATDIR}}/.done_aqua:install:{{.TAG}}'
       silent: true
 
   aqua:all:

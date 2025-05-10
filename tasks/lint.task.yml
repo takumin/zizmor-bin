@@ -3,6 +3,9 @@
 
 version: '3'
 
+vars:
+  STATDIR: '{{env "TASK_TEMP_DIR" | default .ROOT_DIR }}/.stat'
+
 set: [pipefail]
 shopt: [globstar]
 
@@ -22,6 +25,14 @@ tasks:
     - task: ghalint-run
     - task: ghalint-act
 
+  statdir:
+    silent: true
+    internal: true
+    status:
+    - coreutils test -d '{{.STATDIR}}'
+    cmds:
+    - coreutils mkdir -p '{{.STATDIR}}'
+
   editorconfig-checker:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}'
@@ -32,10 +43,10 @@ tasks:
     - '.github/**/*'
     - '**/*'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - ec -exclude .task -exclude .archive -exclude .build .
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
 
   shellcheck:
@@ -47,10 +58,10 @@ tasks:
     - '**/*.sh'
     - '**/*.bash'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - fd -H -E .git/ -E .task/ -t f -e sh -e bash -X shellcheck {}
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
 
   actionlint:
@@ -62,10 +73,10 @@ tasks:
     - '.github/**/*.yml'
     - '.github/**/*.yaml'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - actionlint -shellcheck shellcheck
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
 
   ghalint-run:
@@ -77,10 +88,10 @@ tasks:
     - '.github/**/*.yml'
     - '.github/**/*.yaml'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - ghalint run
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
 
   ghalint-act:
@@ -92,8 +103,8 @@ tasks:
     - '.github/**/*.yml'
     - '.github/**/*.yaml'
     generates:
-    - .task/.done_{{.TASK}}
+    - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - ghalint act
-    - cmd: touch .task/.done_{{.TASK}}
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
