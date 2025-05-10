@@ -189,3 +189,26 @@ tasks:
     - coreutils sha256sum -c "{{.BINNAME}}.sha256sum"
     - cmd: touch '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_sha256sum_verify'
       silent: true
+
+  cosign:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist'
+    deps:
+    - task: binary
+    vars:
+      VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
+      BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+    status:
+    - coreutils test -f '{{.BINNAME}}.cert'
+    - coreutils test -f '{{.BINNAME}}.sig'
+    sources:
+    - '{{.BINNAME}}'
+    generates:
+    - '{{.BINNAME}}.cert'
+    - '{{.BINNAME}}.sig'
+    cmds:
+    - >-
+      cosign sign-blob {{.BINNAME}}
+      -y
+      --output-certificate {{.BINNAME}}.cert
+      --output-signature {{.BINNAME}}.sig
