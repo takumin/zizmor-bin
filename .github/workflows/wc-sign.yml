@@ -29,7 +29,7 @@ jobs:
         echo 'Verify sha256sum'
         cd dist
         for f in $(find . -type f -name '*.sha256sum' -printf '%f\n' | sort); do
-          sha256sum -c "$f";
+          sha256sum -c "$f"
         done
     - name: Merge sha256sum
       shell: bash -euo pipefail {0}
@@ -39,7 +39,7 @@ jobs:
         echo -n > SHA256SUMS
         for f in $(find . -type f -name '*.sha256sum' -printf '%f\n' | sort); do
           < "$f" tee -a SHA256SUMS
-          rm "$f";
+          rm "$f"
         done
     - name: Verify sha256sums
       shell: bash -euo pipefail {0}
@@ -62,7 +62,7 @@ jobs:
         echo 'Generate code signing with cosign'
         cd dist
         for f in $(find . -type f -printf '%f\n' | sort); do
-          cosign sign-blob "$f" -y --output-certificate "$f.cert" --output-signature "$f.sig";
+          cosign sign-blob "$f" -y --output-certificate "$f.cert" --output-signature "$f.sig"
         done
     - name: Check artifacts
       shell: bash -euo pipefail {0}
