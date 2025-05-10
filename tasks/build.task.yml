@@ -99,8 +99,10 @@ tasks:
     - task: download
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
-    status:
-    - coreutils test -f '{{.ROOT_DIR}}/.build/{{.VERSION}}/Cargo.toml'
+    sources:
+    - '{{.ROOT_DIR}}/.build/zizmor-{{.VERSION}}.tar.gz'
+    generates:
+    - '{{.ROOT_DIR}}/.build/{{.VERSION}}/Cargo.toml'
     cmds:
     # TODO: which tar command
     - >-
@@ -118,6 +120,10 @@ tasks:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
     status:
     - coreutils test -f '{{.ROOT_DIR}}/.build/.done_fetch_{{.VERSION}}'
+    sources:
+    - '{{.ROOT_DIR}}/.build/{{.VERSION}}/Cargo.toml'
+    generates:
+    - '{{.ROOT_DIR}}/.build/.done_fetch_{{.VERSION}}'
     cmds:
     - cargo fetch --locked
     - cmd: touch '{{.ROOT_DIR}}/.build/.done_fetch_{{.VERSION}}'
@@ -135,8 +141,10 @@ tasks:
     vars:
       EXE: '{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
-    status:
-    - coreutils test -f '{{.ROOT_DIR}}/.build/{{.VERSION}}/target/{{.BUILD_TARGET}}/release/zizmor{{.EXE}}'
+    sources:
+    - '{{.ROOT_DIR}}/.build/{{.VERSION}}/Cargo.toml'
+    generates:
+    - '{{.ROOT_DIR}}/.build/{{.VERSION}}/target/{{.BUILD_TARGET}}/release/zizmor{{.EXE}}'
     env:
       # workaround: github actions build error: deps ring: zig not found
       AQUA_GLOBAL_CONFIG: '{{.ROOT_DIR}}/.aqua/aqua.yml'
@@ -153,8 +161,10 @@ tasks:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
       BUILD_BINNAME: 'zizmor{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
       DIST_BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
-    status:
-    - coreutils test -f '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist/{{.DIST_BINNAME}}'
+    sources:
+    - '{{.BUILD_BINNAME}}'
+    generates:
+    - '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist/{{.DIST_BINNAME}}'
     cmds:
     - cmd: coreutils mkdir -p '{{.ROOT_DIR}}/.build/{{.VERSION}}/dist'
       silent: true
@@ -169,8 +179,10 @@ tasks:
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
       BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
-    status:
-    - coreutils test -f '{{.BINNAME}}.sha256sum'
+    sources:
+    - '{{.BINNAME}}'
+    generates:
+    - '{{.BINNAME}}.sha256sum'
     cmds:
     - coreutils sha256sum -b "{{.BINNAME}}" > "{{.BINNAME}}.sha256sum"
 
@@ -183,8 +195,10 @@ tasks:
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
       BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
-    status:
-    - coreutils test -f '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_sha256sum_verify'
+    sources:
+    - '{{.BINNAME}}'
+    generates:
+    - '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_sha256sum_verify'
     cmds:
     - coreutils sha256sum -c "{{.BINNAME}}.sha256sum"
     - cmd: touch '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_sha256sum_verify'
