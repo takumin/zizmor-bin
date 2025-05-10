@@ -29,13 +29,12 @@ jobs:
         for f in $(find . -type f -name '*.sha256sum' -printf '%f\n' | sort); do
           sha256sum -c "$f";
         done
+    - name: Generate artifact attestation
+      if: ${{ !startsWith(github.event_name, 'pull') }}
+      uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
+      with:
+        subject-path: 'dist/*'
     # TODO
-    # - name: Generate artifact attestation
-    #   if: ${{ !startsWith(github.event_name, 'pull') }}
-    #   uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
-    #   with:
-    #     subject-name: ${{ steps.artifact_name.outputs.result }}
-    #     subject-path: ${{ steps.binary_path.outputs.result }}
     # - name: Generate cosign
     #   if: ${{ !startsWith(github.event_name, 'pull') }}
     #   env:
