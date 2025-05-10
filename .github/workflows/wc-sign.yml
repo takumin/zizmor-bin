@@ -34,21 +34,24 @@ jobs:
       uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
       with:
         subject-path: 'dist/*'
-    # TODO
-    # - name: Generate cosign
-    #   if: ${{ !startsWith(github.event_name, 'pull') }}
-    #   env:
-    #     CERTIFICATE_IDENTITY: >-
-    #       '${{ github.server_url }}/${{ github.repository }}/.github/workflows/wc-build.yml@${{ github.ref }}'
-    #     CERTIFICATE_OIDC_ISSUER: 'https://token.actions.githubusercontent.com'
-    #   run: |-
-    #     task build:cosign:verify
-    # - name: Upload artifact
-    #   uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-    #   with:
-    #     name: artifact-${{ steps.artifact_name.outputs.result }}
-    #     path: |-
-    #       dist/*.cert
-    #       dist/*.sig
+    - name: Setup cosign
+      if: ${{ !startsWith(github.event_name, 'pull') }}
+      uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
+    - name: Generate code signing with cosign
+      if: ${{ !startsWith(github.event_name, 'pull') }}
+      run: |-
+        echo 'Generate code signing with cosign'
+        cd dist
+        for f in $(find . -type f -printf '%f\n' | sort); do
+          cosign sign-blob "$f" -y --output-certificate "$f.cert" --output-signature "$f.sig";
+        done
     - name: Check artifacts
       run: tree --charset ASCII dist/
+    - name: Upload artifact
+      if: ${{ !startsWith(github.event_name, 'pull') }}
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      with:
+        name: artifact-${{ steps.artifact_name.outputs.result }}
+        path: |-
+          dist/*.cert
+          dist/*.sig
