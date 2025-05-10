@@ -54,6 +54,16 @@ jobs:
       attestations: write
     uses: ./.github/workflows/wc-sign.yml
   ##############################################################################
+  # Release
+  ##############################################################################
+  release:
+    needs:
+    - sign
+    name: Release
+    permissions:
+      contents: write
+    uses: ./.github/workflows/wc-release.yml
+  ##############################################################################
   # Status Check
   ##############################################################################
   ci:
@@ -63,6 +73,7 @@ jobs:
     - cache
     - build
     - sign
+    - release
     name: CI
     runs-on: ubuntu-latest
     timeout-minutes: 3
