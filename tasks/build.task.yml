@@ -183,5 +183,9 @@ tasks:
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
       BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
+    status:
+    - coreutils test -f '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_sha256sum_verify'
     cmds:
     - coreutils sha256sum -c "{{.BINNAME}}.sha256sum"
+    - cmd: touch '{{.ROOT_DIR}}/.build/{{.VERSION}}/.done_sha256sum_verify'
+      silent: true
