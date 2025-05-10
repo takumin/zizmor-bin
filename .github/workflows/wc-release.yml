@@ -52,10 +52,11 @@ jobs:
         echo 'Verify code signing with cosign'
         cd dist
         for f in $(find . -type f -not -name '*.cert' -a -not -name '*.sig' -printf '%f\n' | sort); do
-          cosign verify-blob "$f" \
-            --certificate "$f.cert" \
-            --signature "$f.sig" \
-            --certificate-identity "$CERTIFICATE_IDENTITY" \
-            --certificate-oidc-issuer "$CERTIFICATE_OIDC_ISSUER" \
-          ;
+          declare -a args
+          args+=("verify-blob" "$f")
+          args+=("--certificate" "$f.cert")
+          args+=("--signature" "$f.sig")
+          args+=("--certificate-identity" "$CERTIFICATE_IDENTITY")
+          args+=("--certificate-oidc-issuer" "$CERTIFICATE_OIDC_ISSUER")
+          cosign "${args[@]}"
         done
