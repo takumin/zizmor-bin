@@ -19,13 +19,22 @@ jobs:
         path: dist/
         pattern: artifact-*
         merge-multiple: true
+    - name: Check artifacts
+      run: tree --charset ASCII dist/
     - name: Verify sha256sum
       run: |-
+        echo 'Verify sha256sum'
         cd dist
         for f in $(find . -type f -name '*.sha256sum' -printf '%f\n' | sort); do
           sha256sum -c "$f";
         done
     # TODO
+    # - name: Generate artifact attestation
+    #   if: ${{ !startsWith(github.event_name, 'pull') }}
+    #   uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
+    #   with:
+    #     subject-name: ${{ steps.artifact_name.outputs.result }}
+    #     subject-path: ${{ steps.binary_path.outputs.result }}
     # - name: Generate cosign
     #   if: ${{ !startsWith(github.event_name, 'pull') }}
     #   env:
@@ -34,11 +43,12 @@ jobs:
     #     CERTIFICATE_OIDC_ISSUER: 'https://token.actions.githubusercontent.com'
     #   run: |-
     #     task build:cosign:verify
-    # - name: Generate artifact attestation
-    #   if: ${{ !startsWith(github.event_name, 'pull') }}
-    #   uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
+    # - name: Upload artifact
+    #   uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
     #   with:
-    #     subject-name: ${{ steps.artifact_name.outputs.result }}
-    #     subject-path: ${{ steps.binary_path.outputs.result }}
+    #     name: artifact-${{ steps.artifact_name.outputs.result }}
+    #     path: |-
+    #       dist/*.cert
+    #       dist/*.sig
     - name: Check artifacts
       run: tree --charset ASCII dist/
