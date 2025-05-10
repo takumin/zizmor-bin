@@ -35,7 +35,7 @@ jobs:
         # done
         # check failed
         for f in $(find . -type f -not -name '*.cert' -a -not -name '*.sig' -printf '%f\n' | sort); do
-          gh attestation verify "$f" -R "${GITHUB_REPOSITORY}";
+          gh attestation verify "$f" -R "${GITHUB_REPOSITORY}" --format json;
         done
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
