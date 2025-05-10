@@ -91,15 +91,15 @@ jobs:
         CARGO_INCREMENTAL: ${{ startsWith(github.ref, 'refs/tag/') && '0' || '1' }}
       run: |-
         task build:binary
+    - name: Generate sha256sum
+      run: |-
+        task build:sha256sum:verify
     - name: Save build cache
       if: github.ref == 'refs/heads/main' && steps.build-cache-restore.outputs.cache-hit != 'true'
       uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
         key: ${{ steps.build-cache-restore.outputs.cache-primary-key }}
         path: .build/
-    - name: Generate sha256sum
-      run: |-
-        task build:sha256sum:verify
     - name: Get artifact name
       id: artifact_name
       run: echo "result=$(task build:name)" >> "$GITHUB_OUTPUT"
