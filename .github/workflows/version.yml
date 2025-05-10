@@ -127,7 +127,7 @@ jobs:
     - name: Release commit
       shell: bash -euo pipefail {0}
       run: |-
-        git commit --allow-empty --message="${TAG_VERSION}"
+        git commit -S --allow-empty -m "${TAG_VERSION}"
         git push
     - name: Tagging version
       shell: bash -euo pipefail {0}
