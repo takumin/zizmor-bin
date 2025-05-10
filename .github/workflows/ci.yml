@@ -41,9 +41,18 @@ jobs:
     name: Build
     permissions:
       contents: read
+    uses: ./.github/workflows/wc-build.yml
+  ##############################################################################
+  # Sign
+  ##############################################################################
+  sign:
+    needs:
+    - build
+    name: Sign
+    permissions:
       id-token: write
       attestations: write
-    uses: ./.github/workflows/wc-build.yml
+    uses: ./.github/workflows/wc-sign.yml
   ##############################################################################
   # Status Check
   ##############################################################################
@@ -53,6 +62,7 @@ jobs:
     - lint
     - cache
     - build
+    - sign
     name: CI
     runs-on: ubuntu-latest
     timeout-minutes: 3

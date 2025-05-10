@@ -54,8 +54,6 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
-      id-token: write
-      attestations: write
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.matrix.outputs.targets) }}
@@ -111,26 +109,10 @@ jobs:
     - name: Generate sha256sum
       run: |-
         task build:sha256sum:verify
-    - name: Generate cosign
-      if: ${{ !startsWith(github.event_name, 'pull') }}
-      env:
-        CERTIFICATE_IDENTITY: >-
-          '${{ github.server_url }}/${{ github.repository }}/.github/workflows/wc-build.yml@${{ github.ref }}'
-        CERTIFICATE_OIDC_ISSUER: 'https://token.actions.githubusercontent.com'
-      run: |-
-        task build:cosign:verify
-    - name: Generate artifact attestation
-      if: ${{ !startsWith(github.event_name, 'pull') }}
-      uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
-      with:
-        subject-name: ${{ steps.artifact_name.outputs.result }}
-        subject-path: ${{ steps.binary_path.outputs.result }}
     - name: Upload artifact
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
       with:
-        name: ${{ steps.artifact_name.outputs.result }}
+        name: artifact-${{ steps.artifact_name.outputs.result }}
         path: |-
           ${{ steps.binary_path.outputs.result }}
           ${{ steps.binary_path.outputs.result }}.sha256sum
-          ${{ steps.binary_path.outputs.result }}.cert
-          ${{ steps.binary_path.outputs.result }}.sig
