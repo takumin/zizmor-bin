@@ -186,7 +186,7 @@ tasks:
     generates:
     - '{{.BINNAME}}.sha256sum'
     cmds:
-    - coreutils sha256sum -b "{{.BINNAME}}" > "{{.BINNAME}}.sha256sum"
+    - coreutils sha256sum -b "{{.BINNAME}}" | coreutils tee "{{.BINNAME}}.sha256sum"
 
   sha256sum:verify:
     desc: '{{.TASK}}'
