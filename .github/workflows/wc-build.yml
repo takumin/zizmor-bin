@@ -78,12 +78,15 @@ jobs:
       with:
         key: build-${{ matrix.version }}-${{ matrix.target }}-${{ hashFiles('.github/cache-version') }}
         path: .build/
-    - name: Build ${{ matrix.version }} / ${{ matrix.target }}
+    - name: Build binary ${{ matrix.version }} / ${{ matrix.target }}
       env:
         CARGO_INCREMENTAL: ${{ startsWith(github.ref, 'refs/tag/') && '0' || '1' }}
       run: |-
-        task build
-    - name: Cosign ${{ matrix.version }} / ${{ matrix.target }}
+        task build:binary
+    - name: Generate sha256sum ${{ matrix.version }} / ${{ matrix.target }}
+      run: |-
+        task build:sha256sum:verify
+    - name: Generate cosign ${{ matrix.version }} / ${{ matrix.target }}
       if: ${{ !startsWith(github.event_name, 'pull') }}
       env:
         CERTIFICATE_IDENTITY: >-
