@@ -4,7 +4,7 @@
 version: '3'
 
 vars:
-  REPOSITORY: woodruffw/zizmor
+  REPOSITORY: zizmorcore/zizmor
 
 set: [pipefail]
 shopt: [globstar]
