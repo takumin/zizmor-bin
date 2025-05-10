@@ -62,3 +62,11 @@ tasks:
     - task: tool:aqua:tag:jq
     cmds:
     - jq -r '.version' version.json
+
+  all:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:gh
+    cmds:
+    - gh api 'repos/{{.REPOSITORY}}/releases' --jq '.[].name'
