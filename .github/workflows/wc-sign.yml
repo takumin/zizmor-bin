@@ -3,7 +3,7 @@ on:
   workflow_call:
 permissions: {}
 concurrency:
-  group: build-${{ github.ref }}
+  group: sign-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
   sign:
