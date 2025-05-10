@@ -1,4 +1,4 @@
-name: Cache
+name: Setup
 on:
   workflow_call:
     inputs:
@@ -8,14 +8,14 @@ on:
         type: string
     outputs:
       build-version:
-        value: ${{ jobs.cache.outputs.version }}
+        value: ${{ jobs.setup.outputs.version }}
 permissions: {}
 concurrency:
-  group: cache-${{ github.ref }}
+  group: setup-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 jobs:
-  cache:
-    name: Cache
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
