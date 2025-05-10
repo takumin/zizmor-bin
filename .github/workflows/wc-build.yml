@@ -107,3 +107,6 @@ jobs:
         name: ${{ steps.artifact_name.outputs.result }}
         path: |-
           ${{ steps.binary_path.outputs.result }}
+          ${{ steps.binary_path.outputs.result }}.sha256sum
+          ${{ steps.binary_path.outputs.result }}.cert
+          ${{ steps.binary_path.outputs.result }}.sig
