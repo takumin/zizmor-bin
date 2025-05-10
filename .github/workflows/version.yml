@@ -75,7 +75,6 @@ jobs:
       TAG_VERSION: ${{ needs.version.outputs.tagging }}
     permissions:
       contents: read
-      id-token: write
     steps:
     - name: Checkout
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -91,7 +90,6 @@ jobs:
       shell: bash -euo pipefail {0}
       run: |-
         aqua i -t gh
-        aqua i -t gitsign
     - name: Create GitHub App Token
       uses: actions/create-github-app-token@df432ceedc7162793a195dd1713ff69aefc7379e # v2.0.6
       id: app-token
@@ -118,21 +116,15 @@ jobs:
         git config --local user.name "${GITHUB_SERVER_URL}/${GITHUB_WORKFLOW_REF}"
         git config --local user.email "${APP_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
         git config --local push.followTags true
-        git config --local commit.gpgsign true
-        git config --local tag.gpgsign true
-        git config --local gpg.format x509
-        git config --local gpg.x509.program gitsign
-        git config --local gitsign.matchCommitter true
-        git config --local gitsign.timestampURL "${TIMESTAMP_SERVER_URL}"
         git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}"
     - name: Release commit
       shell: bash -euo pipefail {0}
       run: |-
-        git commit -S --allow-empty -m "${TAG_VERSION}"
+        git commit --allow-empty -m "${TAG_VERSION}"
     - name: Tagging version
       shell: bash -euo pipefail {0}
       run: |-
-        git tag -s -m "${TAG_VERSION}" "${TAG_VERSION}"
+        git tag -m "${TAG_VERSION}" "${TAG_VERSION}"
     - name: Push repository
       shell: bash -euo pipefail {0}
       run: |-
