@@ -55,8 +55,7 @@ jobs:
         set -x
         for f in $(find . -type f -not -name '*.cert' -a -not -name '*.sig' -printf '%f\n' | sort); do
           declare -a args
-          args=()
-          args+=("verify-blob" "$f")
+          args=("verify-blob" "$f")
           args+=("--certificate" "$f.cert")
           args+=("--signature" "$f.sig")
           args+=("--certificate-identity" "$CERTIFICATE_IDENTITY")
