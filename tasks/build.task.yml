@@ -7,9 +7,6 @@ set: [pipefail]
 shopt: [globstar]
 
 vars:
-  CERTIFICATE_IDENTITY:
-    sh: git config get user.email
-  CERTIFICATE_OIDC_ISSUER: 'https://github.com/login/oauth'
   LATEST_VERSION:
     sh: coreutils test -f version.json && jq -r '.version' version.json || echo 'unknown'
   BUILD_TARGET: '{{env "BUILD_TARGET" | default "x86_64-unknown-linux-musl"}}'
@@ -238,8 +235,10 @@ tasks:
     vars:
       VERSION: '{{env "BUILD_VERSION" | default .LATEST_VERSION}}'
       BINNAME: 'zizmor-{{.BUILD_TARGET}}{{if contains "-windows-" .BUILD_TARGET}}.exe{{end}}'
-      CERTIFICATE_IDENTITY: '{{env "CERTIFICATE_IDENTITY" | default .CERTIFICATE_IDENTITY}}'
-      CERTIFICATE_OIDC_ISSUER: '{{env "CERTIFICATE_OIDC_ISSUER" | default .CERTIFICATE_OIDC_ISSUER}}'
+    requires:
+      vars:
+      - COSIGN_CERTIFICATE_IDENTITY
+      - COSIGN_CERTIFICATE_OIDC_ISSUER
     sources:
     - '{{.BINNAME}}'
     - '{{.BINNAME}}.cert'
