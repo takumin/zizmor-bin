@@ -77,28 +77,28 @@ jobs:
         When the build system changes, the binaries may change too.
         Please verify using SHA256SUMS or verify the signature using cosign.
 
-        Build date: `${BUILD_DATE}`
+        Build date: \`${BUILD_DATE}\`
 
         SHA256SUMS:
-        ```checksum
+        \`\`\`checksum
         ${SHA256SUMS}
-        ```
+        \`\`\`
 
         GitHub Artifact Attestations:
-        ```console
+        \`\`\`console
         $ gh attestation verify "[artifact path]"
-        ````
+        \`\`\`
 
         Cosign Verifying Signatures:
-        ```console
+        \`\`\`console
         $ cosign verify-blob "[artifact path]" \
             --certificate "[certificate path]" \
             --signature "[signature path]" \
             --certificate-identity \
-            '$CERTIFICATE_IDENTITY' \
+            "$CERTIFICATE_IDENTITY" \
             --certificate-oidc-issuer \
-            '$CERTIFICATE_OIDC_ISSUER'
-        ````
+            "$CERTIFICATE_OIDC_ISSUER"
+        \`\`\`
 
         See also: https://github.com/zizmorcore/zizmor/releases/tag/${GITHUB_REF_NAME}
         __EOF__
