@@ -128,5 +128,5 @@ jobs:
     - name: Tagging version
       shell: bash -euo pipefail {0}
       run: |-
-        git tag "${TAG_VERSION}"
+        git tag -m "${TAG_VERSION}" "${TAG_VERSION}"
         git push --tags
