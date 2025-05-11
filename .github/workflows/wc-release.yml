@@ -109,16 +109,13 @@ jobs:
 
         See also: https://github.com/zizmorcore/zizmor/releases/tag/${BUILD_VERSION}
         __EOF__
-      # - name: "Create release"
-      #   if: startsWith(github.ref, 'refs/tags/')
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   shell: bash -euo pipefail {0}
-      #   run: >-
-      #     gh release create
-      #     -F /tmp/release-note.txt
-      #     -R "${GITHUB_REPOSITORY}"
-      #     --draft
-      #     --title "${BUILD_VERSION}"
-      #     "${BUILD_VERSION}"
-      #     dist/*
+    - name: Upload release artifacts
+      if: ${{ !startsWith(github.event_name, 'pull') }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash -euo pipefail {0}
+      run: |-
+        if gh api "repos/${GITHUB_REPOSITORY}/releases" --jq '.[].name' | grep -q "^${BUILD_VERSION}$"; then
+          gh release edit "${BUILD_VERSION}" -t "${BUILD_VERSION}" -F /tmp/release-note.txt -R "${GITHUB_REPOSITORY}"
+          gh release upload upload "${BUILD_VERSION}" dist/* --clobber -R "${GITHUB_REPOSITORY}"
+        fi
