@@ -15,18 +15,6 @@ includes:
     internal: true
 
 tasks:
-  latest:
-    desc: '{{.TASK}}'
-    dir: '{{.ROOT_DIR}}'
-    deps:
-    - task: tool:aqua:tag:gh
-    vars:
-      VERSION:
-        sh: gh api 'repos/{{.REPOSITORY}}/releases/latest' --jq '.name'
-    cmds:
-    - git tag -s -a -m '{{.VERSION}}' '{{.VERSION}}' release
-    - git push --tags
-
   version:*:
     desc: '{{.TASK}}'
     dir: '{{.ROOT_DIR}}'
@@ -39,3 +27,4 @@ tasks:
     - gh api 'repos/{{.REPOSITORY}}/releases' --jq '.[].name' | rg -q '^{{.VERSION}}$'
     - git tag -s -a -m '{{.VERSION}}' '{{.VERSION}}' release
     - git push --tags
+    - gh workflow run ci -f 'build-version={{.VERSION}}'
