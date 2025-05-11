@@ -35,5 +35,5 @@ tasks:
     vars:
       VERSION: '{{index .MATCH 0}}'
     cmds:
-    - gh api 'repos/{{.REPOSITORY}}/releases' --jq '.[].name' | rg '^{{.VERSION}}$'
+    - gh api 'repos/{{.REPOSITORY}}/releases' --jq '.[].name' | rg -q '^{{.VERSION}}$'
     - git tag -s -a -m '{{.VERSION}}' '{{.VERSION}}' release
