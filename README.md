@@ -1,5 +1,5 @@
 # zizmor-bin
-Private static build of `zizmor`
+Static build of `zizmor`
 
 # About release workflow
 In this repository, we will generate binaries from the main branch and upload them to the release page.
