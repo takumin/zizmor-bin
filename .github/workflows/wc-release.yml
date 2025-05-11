@@ -109,7 +109,7 @@ jobs:
 
         See also: https://github.com/zizmorcore/zizmor/releases/tag/${BUILD_VERSION}
         __EOF__
-    - name: Upload release artifacts
+    - name: Release artifacts
       if: ${{ !startsWith(github.event_name, 'pull') }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -117,5 +117,8 @@ jobs:
       run: |-
         if gh api "repos/${GITHUB_REPOSITORY}/releases" --jq '.[].name' | grep -q "^${BUILD_VERSION}$"; then
           gh release edit "${BUILD_VERSION}" -t "${BUILD_VERSION}" -F /tmp/release-note.txt -R "${GITHUB_REPOSITORY}"
-          gh release upload upload "${BUILD_VERSION}" dist/* --clobber -R "${GITHUB_REPOSITORY}"
+          gh release upload "${BUILD_VERSION}" dist/* --clobber -R "${GITHUB_REPOSITORY}"
+        elif gh api "repos/${GITHUB_REPOSITORY}/tags" --jq '.[].name' | grep -q "^${BUILD_VERSION}$"; then
+          gh release create "${BUILD_VERSION}" -t "${BUILD_VERSION}" -F /tmp/release-note.txt -R "${GITHUB_REPOSITORY}"
+          gh release upload "${BUILD_VERSION}" dist/* --clobber -R "${GITHUB_REPOSITORY}"
         fi
