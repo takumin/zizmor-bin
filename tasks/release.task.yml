@@ -25,6 +25,7 @@ tasks:
         sh: gh api 'repos/{{.REPOSITORY}}/releases/latest' --jq '.name'
     cmds:
     - git tag -s -a -m '{{.VERSION}}' '{{.VERSION}}' release
+    - git push --tags
 
   version:*:
     desc: '{{.TASK}}'
@@ -37,3 +38,4 @@ tasks:
     cmds:
     - gh api 'repos/{{.REPOSITORY}}/releases' --jq '.[].name' | rg -q '^{{.VERSION}}$'
     - git tag -s -a -m '{{.VERSION}}' '{{.VERSION}}' release
+    - git push --tags
