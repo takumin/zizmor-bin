@@ -12,6 +12,7 @@ includes:
   lint: ./tasks/lint.task.yml
   version: ./tasks/version.task.yml
   build: ./tasks/build.task.yml
+  release: ./tasks/release.task.yml
 
 tasks:
   default:

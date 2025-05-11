@@ -1,0 +1,39 @@
+# https://taskfile.dev
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+  REPOSITORY: zizmorcore/zizmor
+
+set: [pipefail]
+shopt: [globstar]
+
+includes:
+  tool:
+    taskfile: tool.task.yml
+    internal: true
+
+tasks:
+  latest:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:gh
+    vars:
+      VERSION:
+        sh: gh api 'repos/{{.REPOSITORY}}/releases/latest' --jq '.name'
+    cmds:
+    - git tag -s -a -m '{{.VERSION}}' '{{.VERSION}}' release
+
+  version:*:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:gh
+    - task: tool:aqua:tag:rg
+    vars:
+      VERSION: '{{index .MATCH 0}}'
+    cmds:
+    - gh api 'repos/{{.REPOSITORY}}/releases' --jq '.[].name' | rg '^{{.VERSION}}$'
+    - git tag -s -a -m '{{.VERSION}}' '{{.VERSION}}' release
