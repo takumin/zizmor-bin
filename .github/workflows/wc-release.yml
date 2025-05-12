@@ -118,7 +118,7 @@ jobs:
         if gh api "repos/${GITHUB_REPOSITORY}/releases" --jq '.[].name' | grep -q "^${BUILD_VERSION}$"; then
           gh release edit "${BUILD_VERSION}" -t "${BUILD_VERSION}" -F /tmp/release-note.txt -R "${GITHUB_REPOSITORY}"
           gh release upload "${BUILD_VERSION}" dist/* --clobber -R "${GITHUB_REPOSITORY}"
-        else
+        elif gh api "repos/${GITHUB_REPOSITORY}/tags" --jq '.[].name' | grep -q "^${BUILD_VERSION}$"; then
           gh release create "${BUILD_VERSION}" -t "${BUILD_VERSION}" -F /tmp/release-note.txt -R "${GITHUB_REPOSITORY}"
           gh release upload "${BUILD_VERSION}" dist/* --clobber -R "${GITHUB_REPOSITORY}"
         fi
