@@ -24,6 +24,7 @@ tasks:
     - task: actionlint
     - task: ghalint-run
     - task: ghalint-act
+    - task: zizmor
 
   statdir:
     silent: true
@@ -104,5 +105,20 @@ tasks:
     - '{{.STATDIR}}/.done_{{.TASK}}'
     cmds:
     - ghalint act
+    - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
+      silent: true
+
+  zizmor:
+    desc: '{{.TASK}}'
+    dir: '{{.ROOT_DIR}}'
+    deps:
+    - task: tool:aqua:tag:zizmor
+    sources:
+    - '.github/**/*.yml'
+    - '.github/**/*.yaml'
+    generates:
+    - '{{.STATDIR}}/.done_{{.TASK}}'
+    cmds:
+    - zizmor --quiet --no-progress .
     - cmd: touch '{{.STATDIR}}/.done_{{.TASK}}'
       silent: true
