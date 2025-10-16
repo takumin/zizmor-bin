@@ -1,4 +1,4 @@
 packages:
-- name: BurntSushi/ripgrep@14.1.1
+- name: BurntSushi/ripgrep@15.0.0
   tags:
   - ripgrep
